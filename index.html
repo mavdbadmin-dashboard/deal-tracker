@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MavDB Deal Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --navy: #0D1B2A;
+    --navy-light: #162336;
+    --navy-card: #1A2B3E;
+    --navy-border: #243648;
+    --gold: #D4A843;
+    --gold-light: #E8C068;
+    --gold-dim: rgba(212,168,67,0.15);
+    --white: #F0F4F8;
+    --white-dim: rgba(240,244,248,0.7);
+    --green: #2ECC71;
+    --green-dim: rgba(46,204,113,0.15);
+    --red: #E74C3C;
+    --red-dim: rgba(231,76,60,0.15);
+    --orange: #F39C12;
+    --orange-dim: rgba(243,156,18,0.15);
+    --blue: #3498DB;
+    --blue-dim: rgba(52,152,219,0.15);
+    --purple: #9B59B6;
+    --purple-dim: rgba(155,89,182,0.15);
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --shadow-hover: 0 8px 40px rgba(0,0,0,0.6);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0a1520;
+    color: var(--white);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    background: var(--navy);
+    border-bottom: 1px solid var(--navy-border);
+    padding: 0 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 16px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+  .logo-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.3px;
+  }
+  .logo-sub {
+    font-size: 11px;
+    color: var(--white-dim);
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-copy {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gold-dim);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn-copy:hover { background: var(--gold); color: var(--navy); }
+  .btn-copy.copied { background: var(--green); border-color: var(--green); color: white; }
+  .last-updated {
+    font-size: 11px;
+    color: var(--white-dim);
+    white-space: nowrap;
+  }
+
+  /* ─── DASHBOARD BAR ─── */
+  .dashboard-bar {
+    background: var(--navy-light);
+    border-bottom: 1px solid var(--navy-border);
+    padding: 0 24px;
+  }
+  .dashboard-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .dashboard-inner::-webkit-scrollbar { display: none; }
+  .stat-item {
+    padding: 14px 28px 14px 0;
+    margin-right: 28px;
+    border-right: 1px solid var(--navy-border);
+    flex-shrink: 0;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--white-dim);
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-value.green { color: var(--green); }
+  .stat-value.red { color: var(--red); }
+
+  /* ─── FILTER BAR ─── */
+  .filter-bar {
+    padding: 16px 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--white-dim);
+    margin-right: 4px;
+  }
+  .filter-btn {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--navy-border);
+    background: var(--navy-card);
+    color: var(--white-dim);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .filter-btn.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .filter-btn.urgent.active { background: var(--red); border-color: var(--red); color: white; }
+
+  /* ─── DEAL GRID ─── */
+  .main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+  .deals-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 1100px) { .deals-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 700px) {
+    .deals-grid { grid-template-columns: 1fr; }
+    .filter-bar { padding: 12px 16px; }
+    .main-content { padding: 0 16px 40px; }
+    header { padding: 0 16px; }
+    .dashboard-bar { padding: 0 16px; }
+    .stat-item { padding: 12px 20px 12px 0; margin-right: 20px; }
+    .stat-value { font-size: 18px; }
+  }
+
+  .deal-card {
+    background: var(--navy-card);
+    border: 1px solid var(--navy-border);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .deal-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--navy-border);
+    transition: background 0.25s;
+  }
+  .deal-card.urgency-critical::before { background: var(--red); }
+  .deal-card.urgency-high::before { background: var(--orange); }
+  .deal-card.urgency-medium::before { background: var(--blue); }
+  .deal-card.urgency-live::before { background: var(--green); }
+
+  .deal-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+  }
+  .deal-card.hidden { display: none; }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .card-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.3;
+    flex: 1;
+  }
+  .urgency-flag {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .urgency-flag.critical { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
+  .urgency-flag.high { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
+  .urgency-flag.medium { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue); }
+  .urgency-flag.live { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); animation: pulse 2s infinite; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .card-ticker {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .card-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+  }
+  .badge-structure { background: var(--purple-dim); color: var(--purple); }
+  .badge-status-progress { background: var(--blue-dim); color: var(--blue); }
+  .badge-status-live { background: var(--green-dim); color: var(--green); }
+  .badge-status-needed { background: var(--orange-dim); color: var(--orange); }
+
+  .card-financials {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .card-fin-item { }
+  .card-fin-label {
+    font-size: 10px;
+    color: var(--white-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+  .card-fin-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .card-fin-value.gold { color: var(--gold); }
+
+  .card-footer {
+    border-top: 1px solid var(--navy-border);
+    padding-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .task-progress {
+    font-size: 11px;
+    color: var(--white-dim);
+  }
+  .task-bar {
+    width: 80px;
+    height: 4px;
+    background: var(--navy-border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .task-bar-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+  .card-expand {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+    overflow-y: auto;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .modal {
+    background: var(--navy-card);
+    border: 1px solid var(--navy-border);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 780px;
+    position: relative;
+    transform: translateY(-20px);
+    transition: transform 0.25s;
+    margin: auto;
+    box-shadow: var(--shadow);
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-header {
+    background: var(--navy);
+    padding: 20px 24px;
+    border-radius: var(--radius) var(--radius) 0 0;
+    border-bottom: 1px solid var(--navy-border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .modal-title-group { flex: 1; }
+  .modal-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .modal-sub {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 500;
+  }
+  .modal-close {
+    background: none;
+    border: 1px solid var(--navy-border);
+    color: var(--white-dim);
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    font-family: inherit;
+  }
+  .modal-close:hover { border-color: var(--red); color: var(--red); }
+
+  .modal-body { padding: 24px; }
+
+  .modal-section {
+    margin-bottom: 24px;
+  }
+  .modal-section:last-child { margin-bottom: 0; }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gold);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--navy-border);
+  }
+
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 500px) { .overview-grid { grid-template-columns: 1fr; } }
+  .ov-item { }
+  .ov-label {
+    font-size: 10px;
+    color: var(--white-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 500;
+    margin-bottom: 3px;
+  }
+  .ov-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+  }
+  .ov-value.gold { color: var(--gold); }
+  .ov-value.big { font-size: 18px; font-weight: 800; }
+
+  /* Status dropdown */
+  .status-select {
+    background: var(--navy);
+    border: 1px solid var(--navy-border);
+    color: var(--white);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
+    transition: border-color 0.2s;
+  }
+  .status-select:hover, .status-select:focus { border-color: var(--gold); outline: none; }
+
+  /* Tasks */
+  .task-list { display: flex; flex-direction: column; gap: 8px; }
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--navy);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--navy-border);
+    transition: border-color 0.2s;
+  }
+  .task-item:hover { border-color: var(--navy-border); }
+  .task-item.done { opacity: 0.55; }
+  .task-cb {
+    width: 16px; height: 16px;
+    border: 2px solid var(--navy-border);
+    border-radius: 3px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 1px;
+    accent-color: var(--gold);
+  }
+  .task-text {
+    flex: 1;
+    font-size: 13px;
+    color: var(--white);
+    line-height: 1.4;
+  }
+  .task-text.done { text-decoration: line-through; color: var(--white-dim); }
+  .task-assignee {
+    font-size: 10px;
+    color: var(--gold);
+    font-weight: 600;
+    background: var(--gold-dim);
+    padding: 2px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+
+  /* Notes */
+  .notes-area {
+    width: 100%;
+    background: var(--navy);
+    border: 1px solid var(--navy-border);
+    border-radius: var(--radius-sm);
+    color: var(--white);
+    font-family: inherit;
+    font-size: 13px;
+    padding: 12px;
+    resize: vertical;
+    min-height: 90px;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+  }
+  .notes-area:focus { border-color: var(--gold); outline: none; }
+  .notes-saved {
+    font-size: 11px;
+    color: var(--green);
+    margin-top: 4px;
+    height: 16px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .notes-saved.show { opacity: 1; }
+
+  /* Contacts */
+  .contacts-list { display: flex; flex-direction: column; gap: 6px; }
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--navy);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--navy-border);
+    font-size: 13px;
+    color: var(--white);
+  }
+  .contact-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+  }
+  .contact-role {
+    font-size: 11px;
+    color: var(--white-dim);
+    margin-left: 4px;
+  }
+
+  /* Urgency tag in modal */
+  .modal-urgency {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 8px;
+  }
+  .modal-urgency.critical { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
+  .modal-urgency.high { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
+  .modal-urgency.medium { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue); }
+  .modal-urgency.live { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
+
+  /* Empty state */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--white-dim);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: var(--navy-border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+  /* No results message */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 14px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .section-header-label {
+    font-size: 13px;
+    color: var(--white-dim);
+    font-weight: 500;
+  }
+  .count-badge {
+    background: var(--navy-card);
+    border: 1px solid var(--navy-border);
+    color: var(--white-dim);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">M</div>
+      <div>
+        <div class="logo-text">MavDB Consulting</div>
+        <div class="logo-sub">Deal Tracker</div>
+      </div>
+    </a>
+    <div class="header-actions">
+      <span class="last-updated" id="lastUpdated"></span>
+      <button class="btn-copy" onclick="copyLink()">
+        <span>🔗</span> Copy Link
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- DASHBOARD BAR -->
+<div class="dashboard-bar">
+  <div class="dashboard-inner">
+    <div class="stat-item">
+      <div class="stat-label">Total Portfolio Value</div>
+      <div class="stat-value" id="statTotal">$1.19B+</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Active Deals</div>
+      <div class="stat-value green" id="statActive">—</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Josh Equity Value</div>
+      <div class="stat-value" id="statJosh">—</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">🔴 Urgent / Critical</div>
+      <div class="stat-value red" id="statUrgent">—</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">🟢 Live / Trading</div>
+      <div class="stat-value green" id="statLive">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">All Deals</button>
+  <button class="filter-btn" data-filter="direct" onclick="setFilter('direct',this)">Direct Listing</button>
+  <button class="filter-btn" data-filter="pipe" onclick="setFilter('pipe',this)">PIPE / RM</button>
+  <button class="filter-btn urgent" data-filter="urgent" onclick="setFilter('urgent',this)">🔴 Urgent</button>
+</div>
+
+<!-- SECTION HEADER -->
+<div class="section-header">
+  <span class="section-header-label" id="sectionLabel">Showing all deals</span>
+  <span class="count-badge" id="countBadge">10 deals</span>
+</div>
+
+<!-- DEAL GRID -->
+<div class="main-content">
+  <div class="deals-grid" id="dealsGrid"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title-group">
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-sub" id="modalSub"></div>
+        <div class="modal-urgency" id="modalUrgency"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ─── DEAL DATA ───
+const DEALS = [
+  {
+    id: 'sugp-cube',
+    name: 'SUGP × Cube Group',
+    ticker: 'SUGP',
+    exchange: 'Nasdaq',
+    structure: 'PIPE + Reverse Merger',
+    structureType: 'pipe',
+    valuation: '$350M',
+    raise: null,
+    joshPct: '35%',
+    joshValue: '$122.5M',
+    joshValueNum: 122.5,
+    status: 'IN PROGRESS',
+    statusKey: 'progress',
+    urgency: 'high',
+    notes_default: 'Term sheet negotiated. Their version named Target Capital 1 LLC as investor. Chan Ming Dave share count blanked. Expense reimbursement shows $0,000 — typo, clarify.',
+    tasks: [
+      { text: 'Negotiate Definitive Agreement', assignee: 'Legal/Ross Carmel' },
+      { text: 'Chan Ming Dave — confirm Class B share count', assignee: 'Josh' },
+      { text: 'CEO Acquisition Approval — irrevocable shareholder consent', assignee: 'Legal' },
+      { text: 'PIPE Closing — Target Capital 1 LLC ($10M, 20% OID, net $8M)', assignee: 'Josh/Investor' },
+      { text: 'Class B Share Redemption using PIPE proceeds', assignee: 'SUGP/Legal' },
+      { text: 'F-4 Filing with SEC', assignee: 'Legal' },
+      { text: 'F-4 Effectiveness', assignee: 'SEC' },
+      { text: 'Acquisition Closing', assignee: 'All Parties' },
+      { text: 'MavDB Facilitator Shares Issued ($13.5M registered shares)', assignee: 'SUGP' },
+    ],
+    contacts: [
+      { name: 'Bartosz Lipiński', role: 'Cube CEO' },
+      { name: 'Ross Carmel', role: 'Sichenzia' },
+      { name: 'Target Capital 1 LLC', role: 'PIPE Investor' },
+    ],
+    extra: { 'PIPE Size': '$10M (20% OID, net $8M)', 'MavDB Fee': '$13.5M registered shares' }
+  },
+  {
+    id: 'azacore',
+    name: 'AzaCore Therapeutics, Inc.',
+    ticker: 'AZLC (proposed)',
+    exchange: 'Nasdaq',
+    structure: 'Nevada S-1 Direct Listing',
+    structureType: 'direct',
+    valuation: '$400M',
+    raise: '$10M PIPE + $200M ELOC',
+    joshPct: '35%',
+    joshValue: '$140M',
+    joshValueNum: 140,
+    status: 'IN PROGRESS',
+    statusKey: 'progress',
+    urgency: 'medium',
+    notes_default: 'Formerly Azalyn Therapeutics — renamed Oct 2 2026. IP still legally at Noveris/Mydecine — MUST transfer before S-1. Deck: https://mavdbadmin-dashboard.github.io/azalyn-therapeutics/',
+    tasks: [
+      { text: '🔴 IP Assignment — Noveris to AzaCore (CRITICAL BLOCKER)', assignee: 'Legal/Karl Nana' },
+      { text: 'Asset Purchase Offer sent ($500K + API debt) — awaiting response', assignee: 'Karl' },
+      { text: 'Confirm MY205B vs MY205C — which is 0.11nM 5-HT2A lead', assignee: 'Josh → Roscow' },
+      { text: 'Confirm EU/US prodrug patent status', assignee: 'Legal' },
+      { text: 'Confirm aza-DMT provisional conversion', assignee: 'Legal' },
+      { text: 'Update S-1 and deck with sub-nanomolar data', assignee: 'George' },
+      { text: 'Nevada incorporation', assignee: 'Legal' },
+      { text: 'S-1 Filing', assignee: 'Legal' },
+      { text: 'PIPE Investor identification ($10M)', assignee: 'Josh/MavDB' },
+      { text: 'Management team / D&O assignment', assignee: 'Josh' },
+      { text: 'Round lot shareholders (13 × 187,500 shares)', assignee: 'Josh' },
+    ],
+    contacts: [
+      { name: 'Rob Roscow', role: 'CSO/Inventor' },
+      { name: 'Denton Hoyer', role: 'Inventor' },
+      { name: 'Andrew Parks', role: 'Ekard Partners' },
+    ],
+    extra: { 'Formerly': 'Azalyn Therapeutics', 'Renamed': 'Oct 2, 2026' }
+  },
+  {
+    id: 'quantacom',
+    name: 'Quantacom Mining Corp',
+    ticker: 'QMC (proposed)',
+    exchange: 'Nasdaq',
+    structure: 'Nevada SPV Direct Listing',
+    structureType: 'direct',
+    valuation: '$350M',
+    raise: '$7M Stage 1 Funding',
+    joshPct: '25%',
+    joshValue: '$87.5M',
+    joshValueNum: 87.5,
+    status: 'IN PROGRESS',
+    statusKey: 'progress',
+    urgency: 'medium',
+    notes_default: 'Formerly East Greenland Project/Quantec AG. Assets: Ryberg Block (Cu-Ni-PGE-Au-REE 6,193 km²) + Mestersvig (Ag-Zn-Pb). Farmor = Longland Resources. Scott Gelbard 25%.',
+    tasks: [
+      { text: 'Incorporate Nevada SPV', assignee: 'Legal' },
+      { text: 'Execute Farm-in Agreement with Longland Resources/Conico (ASX:CNJ)', assignee: 'Legal/Josh' },
+      { text: 'Stage 1 Funding $7M for 51% interest', assignee: 'Investors' },
+      { text: 'S-1 Filing', assignee: 'Legal' },
+      { text: 'Management team / D&O assignment', assignee: 'Josh' },
+      { text: 'Geological report / NI 43-101 equivalent', assignee: 'Technical' },
+      { text: 'Round lot shareholders', assignee: 'Josh' },
+    ],
+    contacts: [
+      { name: 'Gordon Sklenka', role: 'Venex Capital' },
+      { name: 'Sam Charanek', role: '' },
+      { name: 'Ross Carmel', role: 'Sichenzia' },
+    ],
+    extra: { 'Scott Gelbard': '25%', 'Farmor': 'Longland Resources' }
+  },
+  {
+    id: 'secundavida',
+    name: 'SecundaVida Biotech, Inc.',
+    ticker: 'SVB (proposed)',
+    exchange: 'Nasdaq',
+    structure: 'Nevada S-1 Direct Listing',
+    structureType: 'direct',
+    valuation: '$400M',
+    raise: '$10M PIPE + $200M ELOC',
+    joshPct: '35%',
+    joshValue: '$140M',
+    joshValueNum: 140,
+    status: 'IN PROGRESS',
+    statusKey: 'progress',
+    urgency: 'medium',
+    notes_default: 'Formerly Second Life Pharma. Lead: REL-1017 (esmethadone) — KOR/NMDA modulator. Relmada invested $351M — missed Phase 3 due to trial design. Scott Gelbard 35%.',
+    tasks: [
+      { text: 'REL-1017 licensing — outreach to Relmada Therapeutics', assignee: 'Josh/MavDB' },
+      { text: 'License negotiation', assignee: 'Legal' },
+      { text: 'Nevada incorporation', assignee: 'Legal' },
+      { text: 'S-1 Filing', assignee: 'Legal' },
+      { text: 'Management team / D&O assignment', assignee: 'Josh' },
+      { text: 'Round lot shareholders', assignee: 'Josh' },
+      { text: 'PIPE Investor ($10M)', assignee: 'Josh/MavDB' },
+    ],
+    contacts: [
+      { name: 'Andrew Parks', role: 'Ekard Partners' },
+      { name: 'Ross Carmel', role: 'Sichenzia' },
+    ],
+    extra: { 'Lead Asset': 'REL-1017 (esmethadone)', 'Scott Gelbard': '35%' }
+  },
+  {
+    id: 'stratum',
+    name: 'Stratum Oncology, Inc.',
+    ticker: 'STRM (proposed)',
+    exchange: 'Nasdaq',
+    structure: 'Nevada S-1 Direct Listing',
+    structureType: 'direct',
+    valuation: '$400M',
+    raise: '$10M PIPE + $200M ELOC',
+    joshPct: '35%',
+    joshValue: '$140M',
+    joshValueNum: 140,
+    status: 'IN PROGRESS',
+    statusKey: 'progress',
+    urgency: 'medium',
+    notes_default: 'Deck live: https://mavdbadmin-dashboard.github.io/stratum-oncology/ — Scott Gelbard 35%.',
+    tasks: [
+      { text: 'Olaratumab license — Eli Lilly (Jacob Van Naarden)', assignee: 'Josh/MavDB' },
+      { text: 'Rindopepimut license — Celldex (Ronald Pepin)', assignee: 'Josh/MavDB' },
+      { text: 'Trebananib license — Amgen (verify via amgenbd.com)', assignee: 'Josh/MavDB' },
+      { text: 'License negotiations', assignee: 'Legal' },
+      { text: 'Nevada incorporation', assignee: 'Legal' },
+      { text: 'S-1 Filing', assignee: 'Legal' },
+      { text: 'NetraMark partnership agreement (TSX:AIAI)', assignee: 'Josh' },
+      { text: 'Management team / D&O assignment', assignee: 'Josh' },
+    ],
+    contacts: [
+      { name: 'Jacob Van Naarden', role: 'Lilly Oncology' },
+      { name: 'Ronald Pepin', role: 'Celldex CBO' },
+      { name: 'Ross Carmel', role: 'Sichenzia' },
+    ],
+    extra: { 'Scott Gelbard': '35%', 'Deck': 'mavdbadmin-dashboard.github.io/stratum-oncology/' }
+  },
+  {
+    id: 'cogniveil',
+    name: 'Cogniveil Therapeutics, Inc.',
+    ticker: 'CGVL (proposed)',
+    exchange: 'Nasdaq',
+    structure: 'Nevada S-1 Direct Listing',
+    structureType: 'direct',
+    valuation: '$400M',
+    raise: '$10M PIPE + $200M ELOC',
+    joshPct: '35%',
+    joshValue: '$140M',
+    joshValueNum: 140,
+    status: 'IN PROGRESS',
+    statusKey: 'progress',
+    urgency: 'medium',
+    notes_default: 'Deck live: https://mavdbadmin-dashboard.github.io/cogniveil-therapeutics/ — Scott Gelbard 35%.',
+    tasks: [
+      { text: 'Gantenerumab license — Roche (Boris Zaïtra, Head Corp BD)', assignee: 'Josh/MavDB' },
+      { text: 'Fosgonimeton license — Athira (Mark Litton, CEO)', assignee: 'Josh/MavDB' },
+      { text: 'Azeliragon license — vTv Therapeutics (Paul Sekhri, CEO)', assignee: 'Josh/MavDB' },
+      { text: 'License negotiations', assignee: 'Legal' },
+      { text: 'Nevada incorporation', assignee: 'Legal' },
+      { text: 'S-1 Filing', assignee: 'Legal' },
+      { text: 'NetraMark partnership agreement (TSX:AIAI)', assignee: 'Josh' },
+      { text: 'Management team / D&O assignment', assignee: 'Josh' },
+    ],
+    contacts: [
+      { name: 'Boris Zaïtra', role: 'Roche — Head Corp BD' },
+      { name: 'Mark Litton', role: 'Athira CEO' },
+      { name: 'Paul Sekhri', role: 'vTv CEO' },
+    ],
+    extra: { 'Scott Gelbard': '35%', 'Deck': 'mavdbadmin-dashboard.github.io/cogniveil-therapeutics/' }
+  },
+  {
+    id: 'resilion',
+    name: 'Resilion Therapeutics, Inc.',
+    ticker: 'RSLN (proposed)',
+    exchange: 'Nasdaq',
+    structure: 'Nevada S-1 Direct Listing',
+    structureType: 'direct',
+    valuation: '$400M',
+    raise: '$10M PIPE + $200M ELOC',
+    joshPct: '35%',
+    joshValue: '$140M',
+    joshValueNum: 140,
+    status: 'IN PROGRESS',
+    statusKey: 'progress',
+    urgency: 'critical',
+    notes_default: '🚨 Neuphoria in STRATEGIC REVIEW NOW — 60-90 day window. BNC-210 is priority #1 in entire platform. Deck: https://mavdbadmin-dashboard.github.io/resilion-therapeutics/ — Scott Gelbard 35%.',
+    tasks: [
+      { text: '🔴 URGENT — BNC-210 acquisition/license — Neuphoria (Spyros Papapetropoulos, Interim CEO) — SEND NOW', assignee: 'Josh/MavDB' },
+      { text: 'Aticaprant license — J&J Janssen (Nauman Shah, Global Head BD)', assignee: 'Josh/MavDB' },
+      { text: 'AZD7325 license — AstraZeneca (Philip Oliver, Head Neuroscience BD)', assignee: 'Josh/MavDB' },
+      { text: 'License negotiations', assignee: 'Legal' },
+      { text: 'Nevada incorporation', assignee: 'Legal' },
+      { text: 'S-1 Filing', assignee: 'Legal' },
+      { text: 'NetraMark partnership agreement (TSX:AIAI)', assignee: 'Josh' },
+      { text: 'Management team / D&O assignment', assignee: 'Josh' },
+    ],
+    contacts: [
+      { name: 'Spyros Papapetropoulos', role: 'Neuphoria — Interim CEO 🔴 URGENT' },
+      { name: 'Nauman Shah', role: 'J&J Global Head BD' },
+      { name: 'Philip Oliver', role: 'AstraZeneca Head Neuroscience BD' },
+    ],
+    extra: { 'CRITICAL': 'Neuphoria in strategic review — 60-90 day window', 'Scott Gelbard': '35%' }
+  },
+  {
+    id: 'green-circle',
+    name: 'Green Circle',
+    ticker: '—',
+    exchange: 'Nasdaq',
+    structure: 'PIPE',
+    structureType: 'pipe',
+    valuation: '—',
+    raise: null,
+    joshPct: '—',
+    joshValue: '—',
+    joshValueNum: 0,
+    status: '🟢 LIVE — TRADING TUESDAY',
+    statusKey: 'live',
+    urgency: 'live',
+    notes_default: 'F-1 effective Monday Oct 5 2026. Trading begins Tuesday Oct 6 2026. Watch closely.',
+    tasks: [
+      { text: '✅ F-1 cleared by SEC', assignee: 'SEC', done: true },
+      { text: 'F-1 effective — Monday Oct 5, 2026', assignee: 'SEC' },
+      { text: 'Trading begins — Tuesday Oct 6, 2026', assignee: 'Josh/George' },
+      { text: 'Monitor opening trade', assignee: 'Josh/George' },
+    ],
+    contacts: [],
+    extra: { 'F-1 Effective': 'Monday Oct 5, 2026', 'Trading Start': 'Tuesday Oct 6, 2026' }
+  },
+  {
+    id: 'sugp-pipe',
+    name: 'SUGP PIPE',
+    ticker: 'SUGP',
+    exchange: 'Nasdaq',
+    structure: 'PIPE',
+    structureType: 'pipe',
+    valuation: '$350M',
+    raise: '$10M',
+    joshPct: '35%',
+    joshValue: '$122.5M',
+    joshValueNum: 122.5,
+    status: 'IN PROGRESS',
+    statusKey: 'progress',
+    urgency: 'high',
+    notes_default: '$10M PIPE via Target Capital 1 LLC. 20% OID. Net $8M to company. Linked to SUGP × Cube Group deal.',
+    tasks: [
+      { text: 'See SUGP × Cube Group deal — same transaction', assignee: 'All' },
+    ],
+    contacts: [
+      { name: 'Target Capital 1 LLC', role: 'PIPE Investor' },
+      { name: 'Ross Carmel', role: 'Sichenzia' },
+    ],
+    extra: { 'PIPE Size': '$10M', 'OID': '20% (net $8M to company)', 'Linked Deal': 'SUGP × Cube Group' }
+  },
+  {
+    id: 'zkin',
+    name: 'ZKIN',
+    ticker: 'ZKIN',
+    exchange: 'Nasdaq',
+    structure: 'PIPE + Reverse Merger',
+    structureType: 'pipe',
+    valuation: 'TBD',
+    raise: null,
+    joshPct: 'TBD',
+    joshValue: 'TBD',
+    joshValueNum: 0,
+    status: 'DETAILS NEEDED',
+    statusKey: 'needed',
+    urgency: 'high',
+    notes_default: 'New deal added Oct 2 2026. ZKIN is an existing Nasdaq-listed company. Josh to provide full deal structure and terms.',
+    tasks: [
+      { text: 'Josh to provide deal structure and terms', assignee: 'Josh — PENDING' },
+      { text: 'Identify target business/assets for reverse merger', assignee: 'Josh' },
+      { text: 'PIPE investor identification', assignee: 'Josh/MavDB' },
+      { text: 'Legal engagement', assignee: 'Ross Carmel/Sichenzia' },
+    ],
+    contacts: [
+      { name: 'Ross Carmel', role: 'Sichenzia' },
+    ],
+    extra: { 'Added': 'Oct 2, 2026', 'Note': 'Awaiting full terms from Josh' }
+  },
+];
+
+// ─── STATE ───
+let currentFilter = 'all';
+let currentDealId = null;
+
+// ─── LOCALSTORAGE HELPERS ───
+function lsKey(dealId, type) { return `mavdb_${dealId}_${type}`; }
+function getTaskDone(dealId, idx, defaultDone) {
+  const k = lsKey(dealId, `task_${idx}`);
+  const v = localStorage.getItem(k);
+  if (v === null) return !!defaultDone;
+  return v === 'true';
+}
+function setTaskDone(dealId, idx, val) {
+  localStorage.setItem(lsKey(dealId, `task_${idx}`), val ? 'true' : 'false');
+}
+function getNotes(dealId, defaultVal) {
+  const v = localStorage.getItem(lsKey(dealId, 'notes'));
+  return v === null ? defaultVal : v;
+}
+function setNotes(dealId, val) {
+  localStorage.setItem(lsKey(dealId, 'notes'), val);
+}
+function getStatus(dealId, defaultVal) {
+  return localStorage.getItem(lsKey(dealId, 'status')) || defaultVal;
+}
+function setStatus(dealId, val) {
+  localStorage.setItem(lsKey(dealId, 'status'), val);
+}
+
+// ─── STATS ───
+function computeStats() {
+  let joshTotal = 0;
+  let urgentCount = 0;
+  let liveCount = 0;
+  let activeCount = 0;
+  const seen = new Set();
+  DEALS.forEach(d => {
+    if (!seen.has(d.id)) {
+      seen.add(d.id);
+      if (d.joshValueNum > 0) joshTotal += d.joshValueNum;
+      if (d.urgency === 'critical' || d.urgency === 'high') urgentCount++;
+      if (d.urgency === 'live') liveCount++;
+      if (d.statusKey !== 'needed') activeCount++;
+    }
+  });
+  document.getElementById('statActive').textContent = activeCount;
+  document.getElementById('statJosh').textContent = '$' + joshTotal.toFixed(1) + 'M';
+  document.getElementById('statUrgent').textContent = urgentCount;
+  document.getElementById('statLive').textContent = liveCount;
+}
+
+// ─── TASK PROGRESS ───
+function getTaskProgress(deal) {
+  let done = 0;
+  deal.tasks.forEach((t, i) => { if (getTaskDone(deal.id, i, t.done)) done++; });
+  return { done, total: deal.tasks.length };
+}
+
+// ─── RENDER CARDS ───
+function renderCards() {
+  const grid = document.getElementById('dealsGrid');
+  grid.innerHTML = '';
+  let shown = 0;
+  DEALS.forEach(deal => {
+    const show = currentFilter === 'all'
+      || (currentFilter === 'direct' && deal.structureType === 'direct')
+      || (currentFilter === 'pipe' && deal.structureType === 'pipe')
+      || (currentFilter === 'urgent' && (deal.urgency === 'critical' || deal.urgency === 'high' || deal.urgency === 'live'));
+    if (!show) return;
+    shown++;
+    const prog = getTaskProgress(deal);
+    const pct = prog.total > 0 ? Math.round((prog.done / prog.total) * 100) : 0;
+    const urgencyLabel = deal.urgency === 'critical' ? '🔴 Critical'
+      : deal.urgency === 'high' ? '⚠️ High'
+      : deal.urgency === 'live' ? '🟢 Live'
+      : '🔵 Medium';
+    const statusBadgeClass = deal.statusKey === 'live' ? 'badge-status-live'
+      : deal.statusKey === 'needed' ? 'badge-status-needed'
+      : 'badge-status-progress';
+    const currentStatus = getStatus(deal.id, deal.status);
+
+    const card = document.createElement('div');
+    card.className = `deal-card urgency-${deal.urgency}`;
+    card.dataset.id = deal.id;
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="card-name">${deal.name}</div>
+        <div class="urgency-flag ${deal.urgency}">${urgencyLabel}</div>
+      </div>
+      <div class="card-ticker">${deal.ticker} · ${deal.exchange}</div>
+      <div class="card-badges">
+        <span class="badge badge-structure">${deal.structure}</span>
+        <span class="badge ${statusBadgeClass}">${currentStatus}</span>
+      </div>
+      <div class="card-financials">
+        <div class="card-fin-item">
+          <div class="card-fin-label">Valuation</div>
+          <div class="card-fin-value">${deal.valuation}</div>
+        </div>
+        <div class="card-fin-item">
+          <div class="card-fin-label">Josh Equity</div>
+          <div class="card-fin-value gold">${deal.joshValue}</div>
+        </div>
+        ${deal.joshPct !== '—' && deal.joshPct !== 'TBD' ? `
+        <div class="card-fin-item">
+          <div class="card-fin-label">Josh %</div>
+          <div class="card-fin-value">${deal.joshPct}</div>
+        </div>` : ''}
+        ${deal.raise ? `
+        <div class="card-fin-item">
+          <div class="card-fin-label">Raise</div>
+          <div class="card-fin-value">${deal.raise}</div>
+        </div>` : ''}
+      </div>
+      <div class="card-footer">
+        <div class="task-progress">
+          <div>${prog.done}/${prog.total} tasks</div>
+          <div class="task-bar"><div class="task-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+        <div class="card-expand">View Details →</div>
+      </div>
+    `;
+    card.addEventListener('click', () => openModal(deal.id));
+    grid.appendChild(card);
+  });
+
+  const label = currentFilter === 'all' ? 'Showing all deals'
+    : currentFilter === 'direct' ? 'Direct Listings'
+    : currentFilter === 'pipe' ? 'PIPE / Reverse Mergers'
+    : '🔴 Urgent & Critical Deals';
+  document.getElementById('sectionLabel').textContent = label;
+  document.getElementById('countBadge').textContent = shown + (shown === 1 ? ' deal' : ' deals');
+
+  if (shown === 0) {
+    grid.innerHTML = '<div class="empty-state"><div class="icon">📋</div><div>No deals match this filter.</div></div>';
+  }
+}
+
+// ─── FILTER ───
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards();
+}
+
+// ─── MODAL ───
+function openModal(id) {
+  const deal = DEALS.find(d => d.id === id);
+  if (!deal) return;
+  currentDealId = id;
+
+  document.getElementById('modalTitle').textContent = deal.name;
+  document.getElementById('modalSub').textContent = `${deal.ticker} · ${deal.exchange} · ${deal.structure}`;
+
+  const urg = document.getElementById('modalUrgency');
+  const urgLabels = { critical: '🔴 Critical Priority', high: '⚠️ High Priority', medium: '🔵 Medium Priority', live: '🟢 Live — Trading' };
+  urg.textContent = urgLabels[deal.urgency] || deal.urgency;
+  urg.className = `modal-urgency ${deal.urgency}`;
+
+  const body = document.getElementById('modalBody');
+  const currentStatus = getStatus(deal.id, deal.status);
+  const currentNotes = getNotes(deal.id, deal.notes_default);
+
+  // Build extra fields
+  const extraHTML = Object.entries(deal.extra || {}).map(([k,v]) => `
+    <div class="ov-item">
+      <div class="ov-label">${k}</div>
+      <div class="ov-value">${v}</div>
+    </div>`).join('');
+
+  // Build tasks HTML
+  const tasksHTML = deal.tasks.map((t, i) => {
+    const done = getTaskDone(deal.id, i, t.done);
+    return `
+      <div class="task-item${done ? ' done' : ''}" id="task-item-${id}-${i}">
+        <input type="checkbox" class="task-cb" ${done ? 'checked' : ''} onchange="toggleTask('${id}', ${i}, this)"/>
+        <span class="task-text${done ? ' done' : ''}" id="task-text-${id}-${i}">${t.text}</span>
+        ${t.assignee ? `<span class="task-assignee">${t.assignee}</span>` : ''}
+      </div>`;
+  }).join('');
+
+  const contactsHTML = deal.contacts.length
+    ? deal.contacts.map(c => `
+      <div class="contact-item">
+        <div class="contact-dot"></div>
+        <span><strong>${c.name}</strong>${c.role ? `<span class="contact-role">— ${c.role}</span>` : ''}</span>
+      </div>`).join('')
+    : '<div style="color:var(--white-dim);font-size:13px;">No contacts listed.</div>';
+
+  body.innerHTML = `
+    <!-- OVERVIEW -->
+    <div class="modal-section">
+      <div class="section-title">Deal Overview</div>
+      <div class="overview-grid">
+        <div class="ov-item">
+          <div class="ov-label">Valuation</div>
+          <div class="ov-value big gold">${deal.valuation}</div>
+        </div>
+        <div class="ov-item">
+          <div class="ov-label">Josh Equity Value</div>
+          <div class="ov-value big gold">${deal.joshValue}</div>
+        </div>
+        <div class="ov-item">
+          <div class="ov-label">Josh Ownership</div>
+          <div class="ov-value">${deal.joshPct}</div>
+        </div>
+        ${deal.raise ? `<div class="ov-item"><div class="ov-label">Raise Target</div><div class="ov-value">${deal.raise}</div></div>` : ''}
+        <div class="ov-item">
+          <div class="ov-label">Structure</div>
+          <div class="ov-value">${deal.structure}</div>
+        </div>
+        <div class="ov-item">
+          <div class="ov-label">Exchange</div>
+          <div class="ov-value">${deal.exchange}</div>
+        </div>
+        ${extraHTML}
+        <div class="ov-item" style="grid-column:1/-1">
+          <div class="ov-label">Status</div>
+          <select class="status-select" id="status-select-${id}" onchange="updateStatus('${id}', this.value)">
+            <option value="IN PROGRESS" ${currentStatus === 'IN PROGRESS' ? 'selected' : ''}>IN PROGRESS</option>
+            <option value="DETAILS NEEDED" ${currentStatus === 'DETAILS NEEDED' ? 'selected' : ''}>DETAILS NEEDED</option>
+            <option value="🟢 LIVE — TRADING TUESDAY" ${currentStatus === '🟢 LIVE — TRADING TUESDAY' ? 'selected' : ''}>🟢 LIVE — TRADING TUESDAY</option>
+            <option value="ON HOLD" ${currentStatus === 'ON HOLD' ? 'selected' : ''}>ON HOLD</option>
+            <option value="COMPLETED" ${currentStatus === 'COMPLETED' ? 'selected' : ''}>COMPLETED</option>
+            <option value="CANCELLED" ${currentStatus === 'CANCELLED' ? 'selected' : ''}>CANCELLED</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="modal-section">
+      <div class="section-title">Tasks & Checklist</div>
+      <div class="task-list">${tasksHTML}</div>
+    </div>
+
+    <!-- CONTACTS -->
+    ${deal.contacts.length ? `
+    <div class="modal-section">
+      <div class="section-title">Key Contacts</div>
+      <div class="contacts-list">${contactsHTML}</div>
+    </div>` : ''}
+
+    <!-- NOTES -->
+    <div class="modal-section">
+      <div class="section-title">Notes</div>
+      <textarea class="notes-area" id="notes-${id}" placeholder="Add deal notes...">${currentNotes}</textarea>
+      <div class="notes-saved" id="notes-saved-${id}">✓ Saved</div>
+    </div>
+  `;
+
+  // Attach notes save on blur
+  const ta = document.getElementById(`notes-${id}`);
+  ta.addEventListener('blur', () => {
+    setNotes(id, ta.value);
+    const sv = document.getElementById(`notes-saved-${id}`);
+    sv.classList.add('show');
+    setTimeout(() => sv.classList.remove('show'), 2000);
+  });
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentDealId = null;
+  renderCards(); // refresh progress bars
+}
+
+function closeModalOnOverlay(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ─── TASK TOGGLE ───
+function toggleTask(dealId, idx, cb) {
+  setTaskDone(dealId, idx, cb.checked);
+  const item = document.getElementById(`task-item-${dealId}-${idx}`);
+  const text = document.getElementById(`task-text-${dealId}-${idx}`);
+  if (cb.checked) { item.classList.add('done'); text.classList.add('done'); }
+  else { item.classList.remove('done'); text.classList.remove('done'); }
+}
+
+// ─── STATUS UPDATE ───
+function updateStatus(dealId, val) {
+  setStatus(dealId, val);
+}
+
+// ─── COPY LINK ───
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = '<span>🔗</span> Copy Link';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// ─── INIT ───
+function init() {
+  computeStats();
+  renderCards();
+  const now = new Date();
+  document.getElementById('lastUpdated').textContent = 'Updated ' + now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+init();
+</script>
+</body>
+</html>
