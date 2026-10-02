@@ -972,6 +972,38 @@ const DEALS = [
     extra: { 'CRITICAL': 'Neuphoria in strategic review — 60-90 day window', 'Scott Gelbard': '35%' }
   },
   {
+    id: 'rzai',
+    name: 'RozeAI, Inc.',
+    ticker: 'RZAI',
+    exchange: 'Nasdaq',
+    structure: 'LIVE — Direct Listing',
+    structureType: 'direct',
+    valuation: '—',
+    raise: null,
+    joshPct: '21.6%',
+    joshValue: '2,968,704 shares',
+    joshValueNum: 0,
+    status: '🟢 LIVE TRADING',
+    statusKey: 'live',
+    urgency: 'live',
+    notes_default: 'MavDB holds 2,968,704 shares as nominee for Josh Bartch per Beneficial Ownership & Nominee Agreement. Listed Sep 29, 2026. Total RZAI shares across all holders: 13,761,688. Refuge Capital original position: 2,333,328. F-1 filed Sep 21, 2026 (EDGAR CIK 0001926293). TAAD LLP = auditors (Andy Wang, Victor Wong).',
+    tasks: [
+      { text: 'Monitor share price and volume', assignee: 'George' },
+      { text: 'Revere Securities compliance — proof of acquisition submitted', assignee: 'Josh — IN PROGRESS' },
+      { text: 'Advisory Agreement signed', assignee: 'Josh + Young Jin Cho' },
+      { text: 'Refuge Capital transfers — 1,257,000 shares transferred; 626,328 remaining', assignee: 'Josh' },
+      { text: 'MyCar Enterprises SPA (75,000 shares) — price/share TBD', assignee: 'Josh' },
+      { text: '622 Capital LLC SPA (450,000 shares) — price/share TBD', assignee: 'Josh' },
+      { text: 'McConnell Valdés tax opinion on MavDB nominee structure [(787) 250-5604]', assignee: 'Josh' },
+    ],
+    contacts: [
+      { name: 'Young Jin Cho', role: 'CEO, RozeAI' },
+      { name: 'Devin Cottrell', role: 'Revere Securities — dcottrell@reveresecurities.com' },
+      { name: 'James Cho', role: 'jamescho@rozeai.com' },
+    ],
+    extra: { 'Listed': 'September 29, 2026', 'Josh Shares': '2,968,704 (via MavDB LLC as nominee)', 'Total Shares': '13,761,688', 'Refuge Capital Position': '2,333,328 original; 1,257,000 transferred', 'EDGAR CIK': '0001926293', 'Auditors': 'TAAD LLP (Andy Wang, Victor Wong)' }
+  },
+  {
     id: 'green-circle',
     name: 'Green Circle',
     ticker: '—',
@@ -1164,6 +1196,7 @@ function renderCards() {
           <div class="card-fin-value">${deal.raise}</div>
         </div>` : ''}
       </div>
+      ${deal.id === 'rzai' ? `<div style="margin:8px 0 4px;padding:6px 10px;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.3);border-radius:6px;font-size:11px;color:#2ECC71;display:flex;align-items:center;justify-content:space-between;"><span>🟢 Live Price Feed</span><a href="https://finance.yahoo.com/quote/RZAI/" target="_blank" style="color:#2ECC71;text-decoration:underline;font-size:11px;" onclick="event.stopPropagation()">View Chart ↗</a></div>` : ''}
       <div class="card-footer">
         <div class="task-progress">
           <div>${prog.done}/${prog.total} tasks</div>
@@ -1272,6 +1305,7 @@ function openModal(id) {
           <select class="status-select" id="status-select-${id}" onchange="updateStatus('${id}', this.value)">
             <option value="IN PROGRESS" ${currentStatus === 'IN PROGRESS' ? 'selected' : ''}>IN PROGRESS</option>
             <option value="DETAILS NEEDED" ${currentStatus === 'DETAILS NEEDED' ? 'selected' : ''}>DETAILS NEEDED</option>
+            <option value="🟢 LIVE TRADING" ${currentStatus === '🟢 LIVE TRADING' ? 'selected' : ''}>🟢 LIVE TRADING</option>
             <option value="🟢 LIVE — TRADING TUESDAY" ${currentStatus === '🟢 LIVE — TRADING TUESDAY' ? 'selected' : ''}>🟢 LIVE — TRADING TUESDAY</option>
             <option value="ON HOLD" ${currentStatus === 'ON HOLD' ? 'selected' : ''}>ON HOLD</option>
             <option value="COMPLETED" ${currentStatus === 'COMPLETED' ? 'selected' : ''}>COMPLETED</option>
@@ -1301,6 +1335,32 @@ function openModal(id) {
       <div class="notes-saved" id="notes-saved-${id}">✓ Saved</div>
     </div>
   `;
+
+  // TradingView widget for RZAI
+  if (deal.id === 'rzai') {
+    const tvContainer = document.createElement('div');
+    tvContainer.className = 'modal-section';
+    tvContainer.innerHTML = `
+      <div class="section-title">📈 Live Price Chart — RZAI</div>
+      <div class="tradingview-widget-container" style="border-radius:8px;overflow:hidden;">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+        {
+          "symbol": "NASDAQ:RZAI",
+          "width": "100%",
+          "height": 220,
+          "locale": "en",
+          "dateRange": "1D",
+          "colorTheme": "dark",
+          "isTransparent": true,
+          "autosize": true,
+          "largeChartUrl": "https://www.tradingview.com/chart/?symbol=NASDAQ:RZAI"
+        }
+        <\/script>
+      </div>
+    `;
+    body.insertBefore(tvContainer, body.firstChild);
+  }
 
   // Attach notes save on blur
   const ta = document.getElementById(`notes-${id}`);
