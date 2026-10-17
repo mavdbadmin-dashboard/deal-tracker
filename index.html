@@ -998,8 +998,8 @@ const DEALS = [
     type: 'Reverse Merger + PIPE',
     value: '$350M',
     valueNum: 350,
-    status: 'active',
-    statusLabel: 'Active',
+    status: 'in-progress',
+    statusLabel: 'In Progress',
     director: 'Steve Mynott',
     directorEmail: 'stevemynott@ymail.com',
     projected: 'Q1 2027',
@@ -1042,7 +1042,7 @@ const DEALS = [
     id: 'azlc',
     name: 'AzaCore Therapeutics',
     ticker: 'AZLC',
-    exchange: 'Nasdaq Capital Market',
+    exchange: 'Nasdaq',
     type: 'Direct Listing',
     value: '$300–500M',
     valueNum: 400,
@@ -1090,13 +1090,13 @@ const DEALS = [
       { name: 'Ross Carmel', role: 'Attorney, SRFC', email: 'rcarmel@srfc.law' },
       { name: 'Andy Wang', role: 'Auditor, TAAD LLP', email: 'andy@taadllp.com' },
     ],
-    notes: 'Direct listing targeting Nasdaq Capital Market at $300–500M valuation. Therapeutics play focused on Noveris IP (MY205B/MY205C compounds). Formation filed in Nevada — awaiting certificate. Key blocker: IP acquisition negotiation with Noveris. Counter offer sent; awaiting response. Once IP secured, S-1 drafting begins.',
+    notes: 'Direct listing targeting Nasdaq at $300–500M valuation. Therapeutics play focused on Noveris IP (MY205B/MY205C compounds). Formation filed in Nevada — awaiting certificate. Key blocker: IP acquisition negotiation with Noveris. Counter offer sent; awaiting response. Once IP secured, S-1 drafting begins.',
   },
   {
     id: 'qmc',
     name: 'Quantacom Mining Corp / Quantec Holdings',
     ticker: 'QMC',
-    exchange: 'Nasdaq Capital Market',
+    exchange: 'Nasdaq',
     type: 'Direct Listing (Dual)',
     value: '$300M',
     valueNum: 300,
@@ -1183,7 +1183,7 @@ const DEALS = [
     id: 'secundavida',
     name: 'SecundaVida Biotech',
     ticker: '—',
-    exchange: 'Nasdaq Capital Market',
+    exchange: 'Nasdaq',
     type: 'Direct Listing',
     value: '$400M',
     valueNum: 400,
@@ -1261,7 +1261,7 @@ const DEALS = [
     id: 'dbgi',
     name: 'DBGI / Digital Brands Group',
     ticker: 'DBGI',
-    exchange: 'Nasdaq (delisted)',
+    exchange: 'Nasdaq',
     type: 'Litigation + Holdings',
     value: '$47.7M',
     valueNum: 47.7,
@@ -1565,12 +1565,12 @@ const DEALS = [
     id: 'hrny',
     name: 'Horizen Labs',
     ticker: 'HRNY',
-    exchange: 'CSE',
-    type: 'Advisory',
+    exchange: 'Nasdaq',
+    type: 'Direct Listing',
     value: 'Advisory',
     valueNum: 0,
-    status: 'active',
-    statusLabel: 'Active',
+    status: 'in-progress',
+    statusLabel: 'In Progress',
     director: 'Robert',
     directorEmail: '',
     projected: 'Ongoing',
@@ -1864,13 +1864,13 @@ function renderGrid() {
     // Group deals
     const groups = {};
     const groupOrder = currentGroupBy === 'exchange'
-      ? ['Nasdaq', 'NYSE American', 'OTC', 'ASX', 'CSE', 'LSE', 'Euronext', 'Private', 'Nasdaq Capital Market', 'Nasdaq (delisted)']
+      ? ['Nasdaq', 'NYSE American', 'OTC', 'ASX', 'CSE', 'LSE', 'Euronext', 'Private']
       : ['Active', 'In Progress', 'Pending', 'Early Stage', 'Litigation', 'Blocked'];
 
     const groupIcons = currentGroupBy === 'exchange' ? {
       'Nasdaq': '🇺🇸', 'NYSE American': '🇺🇸', 'OTC': '🇺🇸', 'ASX': '🇦🇺',
       'CSE': '🇨🇦', 'LSE': '🇬🇧', 'Euronext': '🇪🇺', 'Private': '🔒',
-      'Nasdaq Capital Market': '🇺🇸', 'Nasdaq (delisted)': '🇺🇸'
+      'Nasdaq': '🇺🇸', 'Nasdaq': '🇺🇸'
     } : {
       'Active': '⚡', 'In Progress': '🔄', 'Pending': '⏳',
       'Early Stage': '🔬', 'Litigation': '⚖️', 'Blocked': '🚫'
@@ -2142,7 +2142,6 @@ const LIVE_TICKERS = [
   { symbol: 'SCP.AX', display: 'SCP', exchange: 'ASX' },
   { symbol: 'ID8.AX', display: 'ID8', exchange: 'ASX' },
   // CSE
-  { symbol: 'HRNY.CN', display: 'HRNY', exchange: 'CSE' },
   // LSE
   { symbol: 'CYKL.L', display: 'CYKL', exchange: 'LSE' },
   // Euronext
