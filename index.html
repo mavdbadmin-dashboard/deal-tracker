@@ -1508,9 +1508,9 @@ const DEALS = [
     notes: 'ASX-listed identity verification company. $20M PIPE in two tranches. Term sheet executed. 200:1 consolidation planned. Atlas Partners controls ~83% fully diluted.',
   },
   {
-    id: 'hrny',
+    id: 'horizen',
     name: 'Horizen Labs',
-    ticker: 'HRNY',
+    ticker: '—',
     exchange: 'Nasdaq',
     type: 'Direct Listing',
     value: 'Advisory',
@@ -2089,6 +2089,7 @@ const LIVE_TICKERS = [
   { symbol: 'ID8.AX', display: 'ID8', exchange: 'ASX' },
   // CSE
   // LSE
+  { symbol: 'HRNY.CN', display: 'HRNY', exchange: 'CSE' },
   { symbol: 'CYKL.L', display: 'CYKL', exchange: 'LSE' },
   // Euronext
   { symbol: 'ALMEX.PA', display: 'ALMEX', exchange: 'Euronext' },
@@ -2104,7 +2105,35 @@ async function fetchQuotes() {
     const resp = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`);
     if (resp.ok) {
       const data = await resp.json();
-      const quotes = data.quoteResponse?.result || [];
+      const quotes = data.quoteResponse?.result || [  {
+    id: 'hrny',
+    name: 'HRNY',
+    ticker: 'HRNY',
+    exchange: 'CSE',
+    type: 'Active Deal',
+    value: 'Holdings',
+    valueNum: 0,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Josh Bartch',
+    directorEmail: 'bartchjosh@gmail.com',
+    projected: 'Ongoing',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: '',
+    progress: 50,
+    milestones: [
+      { label: 'Position established', status: 'done' },
+      { label: 'Monitoring', status: 'in-progress' },
+    ],
+    outstanding: [],
+    documents: [],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: 'Active deal on the CSE. Details to be updated.',
+  },
+];
       container.innerHTML = quotes.map(q => {
         const ticker = LIVE_TICKERS.find(t => t.symbol === q.symbol);
         const name = ticker?.display || q.symbol;
