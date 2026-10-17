@@ -1,1429 +1,1947 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MavDB Deal Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MavDB — Deal Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --navy: #0D1B2A;
-    --navy-light: #162336;
-    --navy-card: #1A2B3E;
-    --navy-border: #243648;
-    --gold: #D4A843;
-    --gold-light: #E8C068;
-    --gold-dim: rgba(212,168,67,0.15);
-    --white: #F0F4F8;
-    --white-dim: rgba(240,244,248,0.7);
-    --green: #2ECC71;
-    --green-dim: rgba(46,204,113,0.15);
-    --red: #E74C3C;
-    --red-dim: rgba(231,76,60,0.15);
-    --orange: #F39C12;
-    --orange-dim: rgba(243,156,18,0.15);
-    --blue: #3498DB;
-    --blue-dim: rgba(52,152,219,0.15);
-    --purple: #9B59B6;
-    --purple-dim: rgba(155,89,182,0.15);
-    --shadow: 0 4px 24px rgba(0,0,0,0.4);
-    --shadow-hover: 0 8px 40px rgba(0,0,0,0.6);
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
+/* ═══════════════════════════════════════════════════════════════
+   CSS RESET & BASE
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-primary: #0A0F1A;
+  --bg-secondary: #111827;
+  --bg-card: #151C2C;
+  --bg-card-hover: #1A2338;
+  --bg-elevated: #1E2A3E;
+  --bg-input: #0D1320;
+  --border: #1E2D45;
+  --border-subtle: #162035;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-dim: #475569;
+  --accent-green: #10B981;
+  --accent-green-dim: rgba(16, 185, 129, 0.15);
+  --accent-blue: #3B82F6;
+  --accent-blue-dim: rgba(59, 130, 246, 0.15);
+  --accent-amber: #F59E0B;
+  --accent-amber-dim: rgba(245, 158, 11, 0.15);
+  --accent-red: #EF4444;
+  --accent-red-dim: rgba(239, 68, 68, 0.15);
+  --accent-purple: #8B5CF6;
+  --accent-purple-dim: rgba(139, 92, 246, 0.15);
+  --accent-cyan: #06B6D4;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.15);
+  --shadow-elevated: 0 8px 40px rgba(0,0,0,0.4);
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: #0a1520;
-    color: var(--white);
-    min-height: 100vh;
-    line-height: 1.5;
-  }
+html { font-size: 15px; scroll-behavior: smooth; }
 
-  /* ─── HEADER ─── */
-  header {
-    background: var(--navy);
-    border-bottom: 1px solid var(--navy-border);
-    padding: 0 24px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(10px);
-  }
-  .header-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-    gap: 16px;
-  }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-  }
-  .logo-icon {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--navy);
-  }
-  .logo-text {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--white);
-    letter-spacing: 0.3px;
-  }
-  .logo-sub {
-    font-size: 11px;
-    color: var(--white-dim);
-    font-weight: 400;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .btn-copy {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--gold-dim);
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    padding: 7px 14px;
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
-  }
-  .btn-copy:hover { background: var(--gold); color: var(--navy); }
-  .btn-copy.copied { background: var(--green); border-color: var(--green); color: white; }
-  .last-updated {
-    font-size: 11px;
-    color: var(--white-dim);
-    white-space: nowrap;
-  }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-  /* ─── DASHBOARD BAR ─── */
-  .dashboard-bar {
-    background: var(--navy-light);
-    border-bottom: 1px solid var(--navy-border);
-    padding: 0 24px;
-  }
-  .dashboard-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .dashboard-inner::-webkit-scrollbar { display: none; }
-  .stat-item {
-    padding: 14px 28px 14px 0;
-    margin-right: 28px;
-    border-right: 1px solid var(--navy-border);
-    flex-shrink: 0;
-  }
-  .stat-item:last-child { border-right: none; }
-  .stat-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--white-dim);
-    margin-bottom: 4px;
-  }
-  .stat-value {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--gold);
-    line-height: 1;
-  }
-  .stat-value.green { color: var(--green); }
-  .stat-value.red { color: var(--red); }
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 
-  /* ─── FILTER BAR ─── */
-  .filter-bar {
-    padding: 16px 24px;
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .filter-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--white-dim);
-    margin-right: 4px;
-  }
-  .filter-btn {
-    padding: 7px 16px;
-    border-radius: 20px;
-    border: 1px solid var(--navy-border);
-    background: var(--navy-card);
-    color: var(--white-dim);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
-    white-space: nowrap;
-  }
-  .filter-btn:hover { border-color: var(--gold); color: var(--gold); }
-  .filter-btn.active {
-    background: var(--gold);
-    border-color: var(--gold);
-    color: var(--navy);
-    font-weight: 700;
-  }
-  .filter-btn.urgent.active { background: var(--red); border-color: var(--red); color: white; }
+/* ═══════════════════════════════════════════════════════════════
+   LAYOUT SHELL
+   ═══════════════════════════════════════════════════════════════ */
+.app { min-height: 100vh; position: relative; }
 
-  /* ─── DEAL GRID ─── */
-  .main-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 24px 40px;
-  }
-  .deals-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-  @media (max-width: 1100px) { .deals-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 700px) {
-    .deals-grid { grid-template-columns: 1fr; }
-    .filter-bar { padding: 12px 16px; }
-    .main-content { padding: 0 16px 40px; }
-    header { padding: 0 16px; }
-    .dashboard-bar { padding: 0 16px; }
-    .stat-item { padding: 12px 20px 12px 0; margin-right: 20px; }
-    .stat-value { font-size: 18px; }
-  }
+/* Subtle grid pattern overlay */
+.app::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(30, 45, 69, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 45, 69, 0.12) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
 
-  .deal-card {
-    background: var(--navy-card);
-    border: 1px solid var(--navy-border);
-    border-radius: var(--radius);
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.25s;
-    position: relative;
-    overflow: hidden;
-  }
-  .deal-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--navy-border);
-    transition: background 0.25s;
-  }
-  .deal-card.urgency-critical::before { background: var(--red); }
-  .deal-card.urgency-high::before { background: var(--orange); }
-  .deal-card.urgency-medium::before { background: var(--blue); }
-  .deal-card.urgency-live::before { background: var(--green); }
+/* Glow orbs */
+.glow-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+.glow-orb.orb-1 { width: 600px; height: 600px; background: var(--accent-blue); top: -200px; right: -100px; }
+.glow-orb.orb-2 { width: 500px; height: 500px; background: var(--accent-green); bottom: -150px; left: -100px; }
 
-  .deal-card:hover {
-    border-color: var(--gold);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
-  }
-  .deal-card.hidden { display: none; }
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 1;
+}
 
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  .card-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--white);
-    line-height: 1.3;
-    flex: 1;
-  }
-  .urgency-flag {
-    flex-shrink: 0;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .urgency-flag.critical { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
-  .urgency-flag.high { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
-  .urgency-flag.medium { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue); }
-  .urgency-flag.live { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); animation: pulse 2s infinite; }
+/* ═══════════════════════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════════════════════ */
+.header {
+  padding: 1.8rem 0 1.2rem;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 1.5rem;
+}
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-  }
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
 
-  .card-ticker {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gold);
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-  }
-  .card-badges {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
-  }
-  .badge {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    white-space: nowrap;
-  }
-  .badge-structure { background: var(--purple-dim); color: var(--purple); }
-  .badge-status-progress { background: var(--blue-dim); color: var(--blue); }
-  .badge-status-live { background: var(--green-dim); color: var(--green); }
-  .badge-status-needed { background: var(--orange-dim); color: var(--orange); }
+.logo-group { display: flex; align-items: center; gap: 1rem; }
 
-  .card-financials {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .card-fin-item { }
-  .card-fin-label {
-    font-size: 10px;
-    color: var(--white-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
-    font-weight: 500;
-  }
-  .card-fin-value {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--white);
-  }
-  .card-fin-value.gold { color: var(--gold); }
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.6rem;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #F1F5F9 0%, #94A3B8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-  .card-footer {
-    border-top: 1px solid var(--navy-border);
-    padding-top: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .task-progress {
-    font-size: 11px;
-    color: var(--white-dim);
-  }
-  .task-bar {
-    width: 80px;
-    height: 4px;
-    background: var(--navy-border);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-top: 4px;
-  }
-  .task-bar-fill {
-    height: 100%;
-    background: var(--gold);
-    border-radius: 2px;
-    transition: width 0.3s;
-  }
-  .card-expand {
-    font-size: 11px;
-    color: var(--gold);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
+.logo-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+}
 
-  /* ─── MODAL ─── */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    z-index: 200;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 20px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s;
-    overflow-y: auto;
-  }
-  .modal-overlay.open {
-    opacity: 1;
-    pointer-events: all;
-  }
-  .modal {
-    background: var(--navy-card);
-    border: 1px solid var(--navy-border);
-    border-radius: var(--radius);
-    width: 100%;
-    max-width: 780px;
-    position: relative;
-    transform: translateY(-20px);
-    transition: transform 0.25s;
-    margin: auto;
-    box-shadow: var(--shadow);
-  }
-  .modal-overlay.open .modal { transform: translateY(0); }
+.header-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
 
-  .modal-header {
-    background: var(--navy);
-    padding: 20px 24px;
-    border-radius: var(--radius) var(--radius) 0 0;
-    border-bottom: 1px solid var(--navy-border);
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-  }
-  .modal-title-group { flex: 1; }
-  .modal-title {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--white);
-    margin-bottom: 4px;
-    line-height: 1.2;
-  }
-  .modal-sub {
-    font-size: 13px;
-    color: var(--gold);
-    font-weight: 500;
-  }
-  .modal-close {
-    background: none;
-    border: 1px solid var(--navy-border);
-    color: var(--white-dim);
-    width: 32px; height: 32px;
-    border-radius: 6px;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-    font-family: inherit;
-  }
-  .modal-close:hover { border-color: var(--red); color: var(--red); }
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
 
-  .modal-body { padding: 24px; }
+.portfolio-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+}
 
-  .modal-section {
-    margin-bottom: 24px;
-  }
-  .modal-section:last-child { margin-bottom: 0; }
-  .section-title {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--gold);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--navy-border);
-  }
+.portfolio-value .label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
 
-  .overview-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-  @media (max-width: 500px) { .overview-grid { grid-template-columns: 1fr; } }
-  .ov-item { }
-  .ov-label {
-    font-size: 10px;
-    color: var(--white-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    font-weight: 500;
-    margin-bottom: 3px;
-  }
-  .ov-value {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--white);
-  }
-  .ov-value.gold { color: var(--gold); }
-  .ov-value.big { font-size: 18px; font-weight: 800; }
+.portfolio-value .value {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent-green);
+}
 
-  /* Status dropdown */
-  .status-select {
-    background: var(--navy);
-    border: 1px solid var(--navy-border);
-    color: var(--white);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 4px;
-    transition: border-color 0.2s;
-  }
-  .status-select:hover, .status-select:focus { border-color: var(--gold); outline: none; }
+.updated-stamp {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
 
-  /* Tasks */
-  .task-list { display: flex; flex-direction: column; gap: 8px; }
-  .task-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 10px 12px;
-    background: var(--navy);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--navy-border);
-    transition: border-color 0.2s;
-  }
-  .task-item:hover { border-color: var(--navy-border); }
-  .task-item.done { opacity: 0.55; }
-  .task-cb {
-    width: 16px; height: 16px;
-    border: 2px solid var(--navy-border);
-    border-radius: 3px;
-    cursor: pointer;
-    flex-shrink: 0;
-    margin-top: 1px;
-    accent-color: var(--gold);
-  }
-  .task-text {
-    flex: 1;
-    font-size: 13px;
-    color: var(--white);
-    line-height: 1.4;
-  }
-  .task-text.done { text-decoration: line-through; color: var(--white-dim); }
-  .task-assignee {
-    font-size: 10px;
-    color: var(--gold);
-    font-weight: 600;
-    background: var(--gold-dim);
-    padding: 2px 6px;
-    border-radius: 3px;
-    white-space: nowrap;
-    flex-shrink: 0;
-    align-self: flex-start;
-  }
+.updated-stamp span { color: var(--text-muted); }
 
-  /* Notes */
-  .notes-area {
-    width: 100%;
-    background: var(--navy);
-    border: 1px solid var(--navy-border);
-    border-radius: var(--radius-sm);
-    color: var(--white);
-    font-family: inherit;
-    font-size: 13px;
-    padding: 12px;
-    resize: vertical;
-    min-height: 90px;
-    transition: border-color 0.2s;
-    line-height: 1.5;
-  }
-  .notes-area:focus { border-color: var(--gold); outline: none; }
-  .notes-saved {
-    font-size: 11px;
-    color: var(--green);
-    margin-top: 4px;
-    height: 16px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .notes-saved.show { opacity: 1; }
+/* ═══════════════════════════════════════════════════════════════
+   TOOLBAR (search + filters)
+   ═══════════════════════════════════════════════════════════════ */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
 
-  /* Contacts */
-  .contacts-list { display: flex; flex-direction: column; gap: 6px; }
-  .contact-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    background: var(--navy);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--navy-border);
-    font-size: 13px;
-    color: var(--white);
-  }
-  .contact-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--gold);
-    flex-shrink: 0;
-  }
-  .contact-role {
-    font-size: 11px;
-    color: var(--white-dim);
-    margin-left: 4px;
-  }
+.search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
 
-  /* Urgency tag in modal */
-  .modal-urgency {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 8px;
-  }
-  .modal-urgency.critical { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
-  .modal-urgency.high { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); }
-  .modal-urgency.medium { background: var(--blue-dim); color: var(--blue); border: 1px solid var(--blue); }
-  .modal-urgency.live { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
+.search-box svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  width: 16px;
+  height: 16px;
+}
 
-  /* Empty state */
-  .empty-state {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--white-dim);
-  }
-  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+.search-box input {
+  width: 100%;
+  padding: 0.65rem 1rem 0.65rem 2.6rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
 
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--navy); }
-  ::-webkit-scrollbar-thumb { background: var(--navy-border); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+.search-box input::placeholder { color: var(--text-dim); }
+.search-box input:focus { border-color: var(--accent-blue); }
 
-  /* No results message */
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 0 14px;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-  .section-header-label {
-    font-size: 13px;
-    color: var(--white-dim);
-    font-weight: 500;
-  }
-  .count-badge {
-    background: var(--navy-card);
-    border: 1px solid var(--navy-border);
-    color: var(--white-dim);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 20px;
-  }
+.filter-group { display: flex; gap: 0.4rem; }
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.filter-btn:hover { border-color: var(--text-dim); color: var(--text-secondary); }
+
+.filter-btn.active {
+  background: var(--accent-blue-dim);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   STATS BAR
+   ═══════════════════════════════════════════════════════════════ */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.stat-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.stat-icon.green { background: var(--accent-green-dim); color: var(--accent-green); }
+.stat-icon.blue { background: var(--accent-blue-dim); color: var(--accent-blue); }
+.stat-icon.amber { background: var(--accent-amber-dim); color: var(--accent-amber); }
+.stat-icon.red { background: var(--accent-red-dim); color: var(--accent-red); }
+
+.stat-info .stat-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.stat-info .stat-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DEAL CARDS GRID
+   ═══════════════════════════════════════════════════════════════ */
+.deals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1rem;
+  padding-bottom: 3rem;
+}
+
+.deal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: cardIn 0.5s ease forwards;
+}
+
+@keyframes cardIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.deal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  transition: opacity var(--transition);
+}
+
+.deal-card[data-status="active"]::before { background: var(--accent-green); }
+.deal-card[data-status="in-progress"]::before { background: var(--accent-blue); }
+.deal-card[data-status="pending"]::before { background: var(--accent-amber); }
+.deal-card[data-status="blocked"]::before { background: var(--accent-red); }
+.deal-card[data-status="early"]::before { background: var(--accent-purple); }
+.deal-card[data-status="litigation"]::before { background: var(--accent-red); }
+
+.deal-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+
+.deal-card .card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.deal-card .deal-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.3;
+  flex: 1;
+  padding-right: 0.5rem;
+}
+
+.deal-card .deal-ticker {
+  color: var(--accent-cyan);
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  margin-top: 2px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.status-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-badge.active { background: var(--accent-green-dim); color: var(--accent-green); }
+.status-badge.active .dot { background: var(--accent-green); box-shadow: 0 0 6px var(--accent-green); }
+
+.status-badge.in-progress { background: var(--accent-blue-dim); color: var(--accent-blue); }
+.status-badge.in-progress .dot { background: var(--accent-blue); box-shadow: 0 0 6px var(--accent-blue); }
+
+.status-badge.pending { background: var(--accent-amber-dim); color: var(--accent-amber); }
+.status-badge.pending .dot { background: var(--accent-amber); box-shadow: 0 0 6px var(--accent-amber); }
+
+.status-badge.blocked, .status-badge.litigation { background: var(--accent-red-dim); color: var(--accent-red); }
+.status-badge.blocked .dot, .status-badge.litigation .dot { background: var(--accent-red); box-shadow: 0 0 6px var(--accent-red); }
+
+.status-badge.early { background: var(--accent-purple-dim); color: var(--accent-purple); }
+.status-badge.early .dot { background: var(--accent-purple); box-shadow: 0 0 6px var(--accent-purple); }
+
+.deal-card .card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+
+.meta-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.meta-tag svg { width: 11px; height: 11px; color: var(--text-dim); }
+
+.deal-card .card-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.deal-card .progress-section { margin-bottom: 0.7rem; }
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.progress-bar {
+  height: 4px;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  width: 0;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.deal-card[data-status="active"] .progress-fill { background: linear-gradient(90deg, var(--accent-green), #34D399); }
+.deal-card[data-status="in-progress"] .progress-fill { background: linear-gradient(90deg, var(--accent-blue), #60A5FA); }
+.deal-card[data-status="pending"] .progress-fill { background: linear-gradient(90deg, var(--accent-amber), #FBBF24); }
+.deal-card[data-status="blocked"] .progress-fill,
+.deal-card[data-status="litigation"] .progress-fill { background: linear-gradient(90deg, var(--accent-red), #F87171); }
+.deal-card[data-status="early"] .progress-fill { background: linear-gradient(90deg, var(--accent-purple), #A78BFA); }
+
+.deal-card .card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.director-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.director-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.director-name {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.projected-date {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DETAIL VIEW
+   ═══════════════════════════════════════════════════════════════ */
+.detail-view {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg-primary);
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.detail-view.open { transform: translateX(0); }
+
+.detail-header {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 2rem;
+}
+
+.detail-header-inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.detail-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.nav-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+.nav-btn svg { width: 14px; height: 14px; }
+
+.detail-title-group h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.3rem;
+}
+
+.detail-title-group .detail-subtitle {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.detail-title-group .ticker-badge {
+  padding: 3px 10px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-cyan);
+}
+
+.detail-title-group .exchange-badge {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.detail-progress-ring {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.progress-circle {
+  width: 70px;
+  height: 70px;
+  position: relative;
+}
+
+.progress-circle svg { transform: rotate(-90deg); }
+
+.progress-circle .bg { stroke: var(--bg-elevated); }
+.progress-circle .fg { transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+.progress-circle .pct {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Detail Sections */
+.detail-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  padding-bottom: 3rem;
+}
+
+.detail-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem;
+}
+
+.detail-section.full-width { grid-column: 1 / -1; }
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title .icon { font-size: 1rem; }
+
+/* Metrics grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.metric-item {
+  padding: 0.8rem;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+}
+
+.metric-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-dim);
+  margin-bottom: 0.3rem;
+}
+
+.metric-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Timeline / Milestones */
+.milestone-list { list-style: none; }
+
+.milestone-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 0.6rem 0;
+  position: relative;
+}
+
+.milestone-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 30px;
+  bottom: -4px;
+  width: 2px;
+  background: var(--border-subtle);
+}
+
+.milestone-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+  position: relative;
+  z-index: 1;
+}
+
+.milestone-dot.done { background: var(--accent-green-dim); color: var(--accent-green); }
+.milestone-dot.in-progress { background: var(--accent-amber-dim); color: var(--accent-amber); }
+.milestone-dot.pending { background: var(--bg-elevated); color: var(--text-dim); }
+.milestone-dot.blocked { background: var(--accent-red-dim); color: var(--accent-red); }
+
+.milestone-text {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.milestone-text .ms-label { color: var(--text-primary); }
+.milestone-text .ms-date { color: var(--text-dim); font-size: 0.72rem; margin-top: 1px; }
+
+/* Outstanding tasks */
+.task-list { list-style: none; }
+
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.6rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+}
+
+.task-item:hover { background: var(--bg-elevated); }
+
+.task-check {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.task-content { flex: 1; }
+.task-content .task-text { font-size: 0.85rem; line-height: 1.4; }
+
+.task-content .task-meta {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 3px;
+}
+
+.task-owner, .task-priority {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.task-owner { color: var(--text-muted); }
+.priority-high { color: var(--accent-red); }
+.priority-medium { color: var(--accent-amber); }
+.priority-low { color: var(--text-dim); }
+
+/* Contacts */
+.contacts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.8rem;
+}
+
+.contact-card {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-md);
+}
+
+.contact-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.contact-info .contact-name { font-size: 0.82rem; font-weight: 600; }
+.contact-info .contact-role { font-size: 0.68rem; color: var(--text-dim); }
+
+/* Notes */
+.notes-content {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.notes-content p { margin-bottom: 0.5rem; }
+
+/* Documents */
+.doc-list { list-style: none; }
+
+.doc-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+}
+
+.doc-item:hover { background: var(--bg-elevated); }
+
+.doc-item .doc-name {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.doc-item .doc-icon { font-size: 0.9rem; }
+
+.doc-status {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.doc-status.signed { background: var(--accent-green-dim); color: var(--accent-green); }
+.doc-status.draft { background: var(--accent-amber-dim); color: var(--accent-amber); }
+.doc-status.final { background: var(--accent-blue-dim); color: var(--accent-blue); }
+.doc-status.filed { background: var(--accent-purple-dim); color: var(--accent-purple); }
+.doc-status.pending { background: var(--bg-elevated); color: var(--text-dim); }
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .detail-body { grid-template-columns: 1fr; }
+  .detail-section.full-width { grid-column: 1; }
+}
+
+@media (max-width: 720px) {
+  html { font-size: 14px; }
+  .container { padding: 0 1rem; }
+  .deals-grid { grid-template-columns: 1fr; }
+  .header-inner { flex-direction: column; align-items: flex-start; }
+  .toolbar { flex-direction: column; }
+  .filter-group { flex-wrap: wrap; }
+  .detail-title-group h1 { font-size: 1.5rem; }
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Animation delay for staggered cards */
+.deal-card:nth-child(1) { animation-delay: 0.05s; }
+.deal-card:nth-child(2) { animation-delay: 0.1s; }
+.deal-card:nth-child(3) { animation-delay: 0.15s; }
+.deal-card:nth-child(4) { animation-delay: 0.2s; }
+.deal-card:nth-child(5) { animation-delay: 0.25s; }
+.deal-card:nth-child(6) { animation-delay: 0.3s; }
+.deal-card:nth-child(7) { animation-delay: 0.35s; }
+.deal-card:nth-child(8) { animation-delay: 0.4s; }
+.deal-card:nth-child(9) { animation-delay: 0.45s; }
+.deal-card:nth-child(10) { animation-delay: 0.5s; }
+
+/* No results */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-dim);
+}
+
+.no-results .nr-icon { font-size: 3rem; margin-bottom: 1rem; }
+.no-results .nr-text { font-size: 1rem; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header>
-  <div class="header-inner">
-    <a class="logo" href="#">
-      <div class="logo-icon">M</div>
-      <div>
-        <div class="logo-text">MavDB Consulting</div>
-        <div class="logo-sub">Deal Tracker</div>
+<!-- Live Market Ticker Bar -->
+<div id="ticker-bar" style="background:#0D1320;border-bottom:1px solid #1E2D45;padding:8px 20px;display:flex;align-items:center;gap:24px;overflow-x:auto;font-family:Inter,sans-serif;font-size:13px;position:sticky;top:0;z-index:999;">
+  <span style="color:#64748B;font-weight:600;white-space:nowrap;">📡 LIVE</span>
+  <div id="ticker-data" style="display:flex;gap:16px;align-items:center;"></div>
+</div>
+
+<div class="app">
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <!-- ═══════════ DASHBOARD VIEW ═══════════ -->
+  <div id="dashboard-view">
+    <div class="container">
+      <header class="header">
+        <div class="header-inner">
+          <div class="logo-group">
+            <div class="logo">MavDB</div>
+            <div class="logo-divider"></div>
+            <div class="header-title">Deal Command Center</div>
+          </div>
+          <div class="header-meta">
+            <div class="portfolio-value">
+              <div>
+                <div class="label">Portfolio Value</div>
+                <div class="value" id="total-value">—</div>
+              </div>
+            </div>
+            <div class="updated-stamp">Updated <span id="last-updated"></span></div>
+          </div>
+        </div>
+      </header>
+
+      <div class="stats-bar" id="stats-bar"></div>
+
+      <div class="toolbar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search-input" placeholder="Search deals by name, ticker, type, or director…">
+        </div>
+        <div class="filter-group" id="filter-group"></div>
       </div>
-    </a>
-    <div class="header-actions">
-      <span class="last-updated" id="lastUpdated"></span>
-      <button class="btn-copy" onclick="copyLink()">
-        <span>🔗</span> Copy Link
-      </button>
+
+      <div class="deals-grid" id="deals-grid"></div>
     </div>
   </div>
-</header>
 
-<!-- DASHBOARD BAR -->
-<div class="dashboard-bar">
-  <div class="dashboard-inner">
-    <div class="stat-item">
-      <div class="stat-label">Total Portfolio Value</div>
-      <div class="stat-value" id="statTotal">$1.19B+</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-label">Active Deals</div>
-      <div class="stat-value green" id="statActive">—</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-label">Josh Equity Value</div>
-      <div class="stat-value" id="statJosh">—</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-label">🔴 Urgent / Critical</div>
-      <div class="stat-value red" id="statUrgent">—</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-label">🟢 Live / Trading</div>
-      <div class="stat-value green" id="statLive">—</div>
-    </div>
-  </div>
-</div>
-
-<!-- FILTER BAR -->
-<div class="filter-bar">
-  <span class="filter-label">Filter:</span>
-  <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">All Deals</button>
-  <button class="filter-btn" data-filter="direct" onclick="setFilter('direct',this)">Direct Listing</button>
-  <button class="filter-btn" data-filter="pipe" onclick="setFilter('pipe',this)">PIPE / RM</button>
-  <button class="filter-btn urgent" data-filter="urgent" onclick="setFilter('urgent',this)">🔴 Urgent</button>
-</div>
-
-<!-- SECTION HEADER -->
-<div class="section-header">
-  <span class="section-header-label" id="sectionLabel">Showing all deals</span>
-  <span class="count-badge" id="countBadge">10 deals</span>
-</div>
-
-<!-- DEAL GRID -->
-<div class="main-content">
-  <div class="deals-grid" id="dealsGrid"></div>
-</div>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
-  <div class="modal" id="modal">
-    <div class="modal-header">
-      <div class="modal-title-group">
-        <div class="modal-title" id="modalTitle"></div>
-        <div class="modal-sub" id="modalSub"></div>
-        <div class="modal-urgency" id="modalUrgency"></div>
+  <!-- ═══════════ DETAIL VIEW ═══════════ -->
+  <div class="detail-view" id="detail-view">
+    <div class="container">
+      <div class="detail-header">
+        <div class="detail-nav">
+          <button class="nav-btn" id="btn-back" onclick="closeDetail()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Dashboard
+          </button>
+          <button class="nav-btn" id="btn-prev" onclick="navDeal(-1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            Prev
+          </button>
+          <button class="nav-btn" id="btn-next" onclick="navDeal(1)">
+            Next
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="detail-header-inner">
+          <div class="detail-title-group">
+            <h1 id="detail-name"></h1>
+            <div class="detail-subtitle">
+              <span class="ticker-badge" id="detail-ticker"></span>
+              <span class="exchange-badge" id="detail-exchange"></span>
+              <span id="detail-status-badge"></span>
+            </div>
+          </div>
+          <div class="detail-progress-ring" id="detail-progress-ring"></div>
+        </div>
       </div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+
+      <div class="detail-body" id="detail-body"></div>
     </div>
-    <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
 
 <script>
-// ─── DEAL DATA ───
+// ═══════════════════════════════════════════════════════════════
+// DEAL DATA
+// ═══════════════════════════════════════════════════════════════
 const DEALS = [
   {
-    id: 'sugp-cube',
-    name: 'SUGP × Cube Group',
+    id: 'sugp',
+    name: 'SUGP × Hypertrust Holdings',
     ticker: 'SUGP',
     exchange: 'Nasdaq',
-    structure: 'PIPE + Reverse Merger',
-    structureType: 'pipe',
-    valuation: '$350M',
-    raise: null,
-    joshPct: '35%',
-    joshValue: '$122.5M',
-    joshValueNum: 122.5,
-    status: 'IN PROGRESS',
-    statusKey: 'progress',
-    urgency: 'high',
-    notes_default: 'Term sheet negotiated. Their version named Target Capital 1 LLC as investor. Chan Ming Dave share count blanked. Expense reimbursement shows $0,000 — typo, clarify.',
-    tasks: [
-      { text: 'Negotiate Definitive Agreement', assignee: 'Legal/Ross Carmel' },
-      { text: 'Chan Ming Dave — confirm Class B share count', assignee: 'Josh' },
-      { text: 'CEO Acquisition Approval — irrevocable shareholder consent', assignee: 'Legal' },
-      { text: 'PIPE Closing — Target Capital 1 LLC ($10M, 20% OID, net $8M)', assignee: 'Josh/Investor' },
-      { text: 'Class B Share Redemption using PIPE proceeds', assignee: 'SUGP/Legal' },
-      { text: 'F-4 Filing with SEC', assignee: 'Legal' },
-      { text: 'F-4 Effectiveness', assignee: 'SEC' },
-      { text: 'Acquisition Closing', assignee: 'All Parties' },
-      { text: 'MavDB Facilitator Shares Issued ($13.5M registered shares)', assignee: 'SUGP' },
+    type: 'Reverse Merger + PIPE',
+    value: '$350M',
+    valueNum: 350,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Steve Mynott',
+    directorEmail: 'stevemynott@ymail.com',
+    projected: 'Q1 2027',
+    pipeGross: '$10M',
+    pipeNet: '$8M',
+    pipeNote: '20% OID',
+    progress: 55,
+    milestones: [
+      { label: 'Term sheet signed', status: 'done' },
+      { label: 'Hypertrust incorporated', status: 'done' },
+      { label: 'Cap table finalization', status: 'in-progress', note: '90% complete' },
+      { label: 'Definitive agreement', status: 'pending' },
+      { label: 'PIPE closing', status: 'pending' },
+      { label: 'Asset contribution', status: 'pending' },
+    ],
+    outstanding: [
+      { text: '89 Group LLC — need registered address', owner: 'Sign Kadouh', priority: 'high' },
+      { text: 'Talora — need registered address', owner: 'Sign Kadouh', priority: 'high' },
+      { text: 'Lawrence Wu — need address on file', owner: 'Sign Kadouh', priority: 'medium' },
+      { text: 'Refuge Capital Bermuda — address needed', owner: 'Sign Kadouh', priority: 'medium' },
+      { text: 'Cube Group — need entity details', owner: 'Sign Kadouh', priority: 'medium' },
+      { text: 'Steve Mynott — EIN info for Hypertrust', owner: 'Steve Mynott', priority: 'high' },
+    ],
+    documents: [
+      { name: 'Term Sheet', status: 'signed' },
+      { name: 'Hypertrust Certificate of Incorporation', status: 'filed' },
+      { name: 'Cap Table v3', status: 'draft' },
+      { name: 'Definitive Agreement', status: 'pending' },
+      { name: 'PIPE Subscription Agreement', status: 'draft' },
     ],
     contacts: [
-      { name: 'Bartosz Lipiński', role: 'Cube CEO' },
-      { name: 'Ross Carmel', role: 'Sichenzia' },
-      { name: 'Target Capital 1 LLC', role: 'PIPE Investor' },
+      { name: 'Steve Mynott', role: 'Director', email: 'stevemynott@ymail.com' },
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+      { name: 'Ross Carmel', role: 'Attorney, SRFC', email: 'rcarmel@srfc.law' },
+      { name: 'Sign Kadouh', role: 'Deal Operations', email: 'sign.kadouh@gmail.com' },
     ],
-    extra: { 'PIPE Size': '$10M (20% OID, net $8M)', 'MavDB Fee': '$13.5M registered shares' }
+    notes: 'Post-transaction target valuation ~$350M. PIPE structured with 20% OID ($10M gross / $8M net). Pending definitive agreement before PIPE can close. Cap table nearly finalized — awaiting several entity addresses for completion. Steve Mynott leading Hypertrust side; needs to provide EIN for the new entity.',
   },
   {
-    id: 'azacore',
-    name: 'AzaCore Therapeutics, Inc.',
-    ticker: 'AZLC (proposed)',
-    exchange: 'Nasdaq',
-    structure: 'Nevada S-1 Direct Listing',
-    structureType: 'direct',
-    valuation: '$400M',
-    raise: '$10M PIPE + $200M ELOC',
-    joshPct: '35%',
-    joshValue: '$140M',
-    joshValueNum: 140,
-    status: 'IN PROGRESS',
-    statusKey: 'progress',
-    urgency: 'medium',
-    notes_default: 'Formerly Azalyn Therapeutics — renamed Oct 2 2026. IP still legally at Noveris/Mydecine — MUST transfer before S-1. Deck: https://mavdbadmin-dashboard.github.io/azalyn-therapeutics/',
-    tasks: [
-      { text: '🔴 IP Assignment — Noveris to AzaCore (CRITICAL BLOCKER)', assignee: 'Legal/Karl Nana' },
-      { text: 'Asset Purchase Offer sent ($500K + API debt) — awaiting response', assignee: 'Karl' },
-      { text: 'Confirm MY205B vs MY205C — which is 0.11nM 5-HT2A lead', assignee: 'Josh → Roscow' },
-      { text: 'Confirm EU/US prodrug patent status', assignee: 'Legal' },
-      { text: 'Confirm aza-DMT provisional conversion', assignee: 'Legal' },
-      { text: 'Update S-1 and deck with sub-nanomolar data', assignee: 'George' },
-      { text: 'Nevada incorporation', assignee: 'Legal' },
-      { text: 'S-1 Filing', assignee: 'Legal' },
-      { text: 'PIPE Investor identification ($10M)', assignee: 'Josh/MavDB' },
-      { text: 'Management team / D&O assignment', assignee: 'Josh' },
-      { text: 'Round lot shareholders (13 × 187,500 shares)', assignee: 'Josh' },
+    id: 'azlc',
+    name: 'AzaCore Therapeutics',
+    ticker: 'AZLC',
+    exchange: 'Nasdaq Capital Market',
+    type: 'Direct Listing',
+    value: '$300–500M',
+    valueNum: 400,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Karl Nana',
+    directorEmail: 'karl@blap.tv',
+    projected: 'H1 2027',
+    pipeGross: '$10M',
+    pipeNet: '$8M',
+    pipeNote: '',
+    progress: 50,
+    milestones: [
+      { label: 'Concept development', status: 'done' },
+      { label: 'Cap table structure', status: 'done' },
+      { label: 'Financial model', status: 'done' },
+      { label: 'NDA with Noveris', status: 'done' },
+      { label: 'Counter offer sent to Noveris', status: 'done' },
+      { label: 'Formation filed (Nevada)', status: 'done' },
+      { label: 'Investor deck', status: 'done' },
+      { label: 'IP acquisition (Noveris)', status: 'in-progress' },
+      { label: 'S-1 registration drafting', status: 'pending' },
+      { label: 'Round lot shareholders (300+)', status: 'pending' },
+      { label: 'TAAD LLP audit', status: 'pending' },
+      { label: 'Nasdaq application', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'AzaCore certificate from Nevada SOS', owner: 'Raquel Vazquez', priority: 'high' },
+      { text: 'Noveris IP negotiation — awaiting response to counter offer', owner: 'Josh Bartch', priority: 'high' },
+      { text: 'Preclinical data confirmation — MY205B vs MY205C compound selection', owner: 'Jason Birmingham', priority: 'medium' },
+    ],
+    documents: [
+      { name: 'Formation Docs (Nevada)', status: 'filed' },
+      { name: 'NDA — AzaCore / Noveris', status: 'signed' },
+      { name: 'IP Licensing Term Sheet', status: 'draft' },
+      { name: 'Investor Presentation', status: 'final' },
+      { name: 'Financial Model', status: 'final' },
+      { name: 'Cap Table', status: 'final' },
+      { name: 'S-1 Registration Statement', status: 'pending' },
     ],
     contacts: [
-      { name: 'Rob Roscow', role: 'CSO/Inventor' },
-      { name: 'Denton Hoyer', role: 'Inventor' },
-      { name: 'Andrew Parks', role: 'Ekard Partners' },
+      { name: 'Karl Nana', role: 'Director', email: 'karl@blap.tv' },
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+      { name: 'Jason Birmingham', role: 'Noveris', email: 'jb@noveris.health' },
+      { name: 'Ross Carmel', role: 'Attorney, SRFC', email: 'rcarmel@srfc.law' },
+      { name: 'Andy Wang', role: 'Auditor, TAAD LLP', email: 'andy@taadllp.com' },
     ],
-    extra: { 'Formerly': 'Azalyn Therapeutics', 'Renamed': 'Oct 2, 2026' }
+    notes: 'Direct listing targeting Nasdaq Capital Market at $300–500M valuation. Therapeutics play focused on Noveris IP (MY205B/MY205C compounds). Formation filed in Nevada — awaiting certificate. Key blocker: IP acquisition negotiation with Noveris. Counter offer sent; awaiting response. Once IP secured, S-1 drafting begins.',
   },
   {
-    id: 'quantacom',
-    name: 'Quantacom Mining Corp',
-    ticker: 'QMC (proposed)',
-    exchange: 'Nasdaq',
-    structure: 'Nevada SPV Direct Listing',
-    structureType: 'direct',
-    valuation: '$350M',
-    raise: '$7M Stage 1 Funding',
-    joshPct: '25%',
-    joshValue: '$87.5M',
-    joshValueNum: 87.5,
-    status: 'IN PROGRESS',
-    statusKey: 'progress',
-    urgency: 'medium',
-    notes_default: 'Formerly East Greenland Project/Quantec AG. Assets: Ryberg Block (Cu-Ni-PGE-Au-REE 6,193 km²) + Mestersvig (Ag-Zn-Pb). Farmor = Longland Resources. Scott Gelbard 25%.',
-    tasks: [
-      { text: 'Incorporate Nevada SPV', assignee: 'Legal' },
-      { text: 'Execute Farm-in Agreement with Longland Resources/Conico (ASX:CNJ)', assignee: 'Legal/Josh' },
-      { text: 'Stage 1 Funding $7M for 51% interest', assignee: 'Investors' },
-      { text: 'S-1 Filing', assignee: 'Legal' },
-      { text: 'Management team / D&O assignment', assignee: 'Josh' },
-      { text: 'Geological report / NI 43-101 equivalent', assignee: 'Technical' },
-      { text: 'Round lot shareholders', assignee: 'Josh' },
+    id: 'qmc',
+    name: 'Quantacom Mining Corp / Quantec Holdings',
+    ticker: 'QMC',
+    exchange: 'Nasdaq Capital Market',
+    type: 'Direct Listing (Dual)',
+    value: '$300M',
+    valueNum: 300,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Gerald Tritt',
+    directorEmail: 'gerald@senarycapital.com',
+    projected: 'H2 2027',
+    pipeGross: '$10M × 2',
+    pipeNet: '$8M × 2',
+    pipeNote: 'Per project',
+    progress: 40,
+    milestones: [
+      { label: 'Concept development', status: 'done' },
+      { label: 'Cap tables (3 versions)', status: 'done' },
+      { label: 'Financial model', status: 'done' },
+      { label: 'Incorporated (Oct 6)', status: 'done' },
+      { label: 'Farm-in JVA drafted', status: 'done' },
+      { label: 'RBW Capital engaged', status: 'done' },
+      { label: 'EIN application', status: 'in-progress' },
+      { label: 'Geological data compilation', status: 'pending' },
+      { label: 'S-1 registration drafting', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'EIN — Raquel processing', owner: 'Raquel Vazquez', priority: 'high' },
+      { text: 'Kyler / Matty / Muss — entity details for cap table', owner: 'Gerald Tritt', priority: 'medium' },
+      { text: 'Field season planning', owner: 'Gerald Tritt', priority: 'medium' },
+    ],
+    documents: [
+      { name: 'Certificate of Incorporation', status: 'filed' },
+      { name: 'Cap Table — Master ($300M)', status: 'final' },
+      { name: 'Cap Table — Project 1 ($75M)', status: 'final' },
+      { name: 'Cap Table — Project 2 ($225M)', status: 'final' },
+      { name: 'Financial Model', status: 'final' },
+      { name: 'Farm-in JVA', status: 'draft' },
     ],
     contacts: [
-      { name: 'Gordon Sklenka', role: 'Venex Capital' },
-      { name: 'Sam Charanek', role: '' },
-      { name: 'Ross Carmel', role: 'Sichenzia' },
+      { name: 'Gerald Tritt', role: 'Director', email: 'gerald@senarycapital.com' },
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+      { name: 'Philip Gaucher', role: 'RBW Capital', email: 'pgaucher@rbwcap.com' },
+      { name: 'Adam Grund', role: 'RBW Capital', email: 'agrund@rbwcap.com' },
+      { name: 'Raquel Vazquez', role: 'Paralegal, SRFC', email: 'rvazquez@srfc.law' },
     ],
-    extra: { 'Scott Gelbard': '25%', 'Farmor': 'Longland Resources' }
-  },
-  {
-    id: 'secundavida',
-    name: 'SecundaVida Biotech, Inc.',
-    ticker: 'SVB (proposed)',
-    exchange: 'Nasdaq',
-    structure: 'Nevada S-1 Direct Listing',
-    structureType: 'direct',
-    valuation: '$400M',
-    raise: '$10M PIPE + $200M ELOC',
-    joshPct: '35%',
-    joshValue: '$140M',
-    joshValueNum: 140,
-    status: 'IN PROGRESS',
-    statusKey: 'progress',
-    urgency: 'medium',
-    notes_default: 'Formerly Second Life Pharma. Lead: REL-1017 (esmethadone) — KOR/NMDA modulator. Relmada invested $351M — missed Phase 3 due to trial design. Scott Gelbard 35%.',
-    tasks: [
-      { text: 'REL-1017 licensing — outreach to Relmada Therapeutics', assignee: 'Josh/MavDB' },
-      { text: 'License negotiation', assignee: 'Legal' },
-      { text: 'Nevada incorporation', assignee: 'Legal' },
-      { text: 'S-1 Filing', assignee: 'Legal' },
-      { text: 'Management team / D&O assignment', assignee: 'Josh' },
-      { text: 'Round lot shareholders', assignee: 'Josh' },
-      { text: 'PIPE Investor ($10M)', assignee: 'Josh/MavDB' },
-    ],
-    contacts: [
-      { name: 'Andrew Parks', role: 'Ekard Partners' },
-      { name: 'Ross Carmel', role: 'Sichenzia' },
-    ],
-    extra: { 'Lead Asset': 'REL-1017 (esmethadone)', 'Scott Gelbard': '35%' }
-  },
-  {
-    id: 'stratum',
-    name: 'Stratum Oncology, Inc.',
-    ticker: 'STRM (proposed)',
-    exchange: 'Nasdaq',
-    structure: 'Nevada S-1 Direct Listing',
-    structureType: 'direct',
-    valuation: '$400M',
-    raise: '$10M PIPE + $200M ELOC',
-    joshPct: '35%',
-    joshValue: '$140M',
-    joshValueNum: 140,
-    status: 'IN PROGRESS',
-    statusKey: 'progress',
-    urgency: 'medium',
-    notes_default: 'Deck live: https://mavdbadmin-dashboard.github.io/stratum-oncology/ — Scott Gelbard 35%.',
-    tasks: [
-      { text: 'Olaratumab license — Eli Lilly (Jacob Van Naarden)', assignee: 'Josh/MavDB' },
-      { text: 'Rindopepimut license — Celldex (Ronald Pepin)', assignee: 'Josh/MavDB' },
-      { text: 'Trebananib license — Amgen (verify via amgenbd.com)', assignee: 'Josh/MavDB' },
-      { text: 'License negotiations', assignee: 'Legal' },
-      { text: 'Nevada incorporation', assignee: 'Legal' },
-      { text: 'S-1 Filing', assignee: 'Legal' },
-      { text: 'NetraMark partnership agreement (TSX:AIAI)', assignee: 'Josh' },
-      { text: 'Management team / D&O assignment', assignee: 'Josh' },
-    ],
-    contacts: [
-      { name: 'Jacob Van Naarden', role: 'Lilly Oncology' },
-      { name: 'Ronald Pepin', role: 'Celldex CBO' },
-      { name: 'Ross Carmel', role: 'Sichenzia' },
-    ],
-    extra: { 'Scott Gelbard': '35%', 'Deck': 'mavdbadmin-dashboard.github.io/stratum-oncology/' }
-  },
-  {
-    id: 'cogniveil',
-    name: 'Cogniveil Therapeutics, Inc.',
-    ticker: 'CGVL (proposed)',
-    exchange: 'Nasdaq',
-    structure: 'Nevada S-1 Direct Listing',
-    structureType: 'direct',
-    valuation: '$400M',
-    raise: '$10M PIPE + $200M ELOC',
-    joshPct: '35%',
-    joshValue: '$140M',
-    joshValueNum: 140,
-    status: 'IN PROGRESS',
-    statusKey: 'progress',
-    urgency: 'medium',
-    notes_default: 'Deck live: https://mavdbadmin-dashboard.github.io/cogniveil-therapeutics/ — Scott Gelbard 35%.',
-    tasks: [
-      { text: 'Gantenerumab license — Roche (Boris Zaïtra, Head Corp BD)', assignee: 'Josh/MavDB' },
-      { text: 'Fosgonimeton license — Athira (Mark Litton, CEO)', assignee: 'Josh/MavDB' },
-      { text: 'Azeliragon license — vTv Therapeutics (Paul Sekhri, CEO)', assignee: 'Josh/MavDB' },
-      { text: 'License negotiations', assignee: 'Legal' },
-      { text: 'Nevada incorporation', assignee: 'Legal' },
-      { text: 'S-1 Filing', assignee: 'Legal' },
-      { text: 'NetraMark partnership agreement (TSX:AIAI)', assignee: 'Josh' },
-      { text: 'Management team / D&O assignment', assignee: 'Josh' },
-    ],
-    contacts: [
-      { name: 'Boris Zaïtra', role: 'Roche — Head Corp BD' },
-      { name: 'Mark Litton', role: 'Athira CEO' },
-      { name: 'Paul Sekhri', role: 'vTv CEO' },
-    ],
-    extra: { 'Scott Gelbard': '35%', 'Deck': 'mavdbadmin-dashboard.github.io/cogniveil-therapeutics/' }
-  },
-  {
-    id: 'resilion',
-    name: 'Resilion Therapeutics, Inc.',
-    ticker: 'RSLN (proposed)',
-    exchange: 'Nasdaq',
-    structure: 'Nevada S-1 Direct Listing',
-    structureType: 'direct',
-    valuation: '$400M',
-    raise: '$10M PIPE + $200M ELOC',
-    joshPct: '35%',
-    joshValue: '$140M',
-    joshValueNum: 140,
-    status: 'IN PROGRESS',
-    statusKey: 'progress',
-    urgency: 'critical',
-    notes_default: '🚨 Neuphoria in STRATEGIC REVIEW NOW — 60-90 day window. BNC-210 is priority #1 in entire platform. Deck: https://mavdbadmin-dashboard.github.io/resilion-therapeutics/ — Scott Gelbard 35%.',
-    tasks: [
-      { text: '🔴 URGENT — BNC-210 acquisition/license — Neuphoria (Spyros Papapetropoulos, Interim CEO) — SEND NOW', assignee: 'Josh/MavDB' },
-      { text: 'Aticaprant license — J&J Janssen (Nauman Shah, Global Head BD)', assignee: 'Josh/MavDB' },
-      { text: 'AZD7325 license — AstraZeneca (Philip Oliver, Head Neuroscience BD)', assignee: 'Josh/MavDB' },
-      { text: 'License negotiations', assignee: 'Legal' },
-      { text: 'Nevada incorporation', assignee: 'Legal' },
-      { text: 'S-1 Filing', assignee: 'Legal' },
-      { text: 'NetraMark partnership agreement (TSX:AIAI)', assignee: 'Josh' },
-      { text: 'Management team / D&O assignment', assignee: 'Josh' },
-    ],
-    contacts: [
-      { name: 'Spyros Papapetropoulos', role: 'Neuphoria — Interim CEO 🔴 URGENT' },
-      { name: 'Nauman Shah', role: 'J&J Global Head BD' },
-      { name: 'Philip Oliver', role: 'AstraZeneca Head Neuroscience BD' },
-    ],
-    extra: { 'CRITICAL': 'Neuphoria in strategic review — 60-90 day window', 'Scott Gelbard': '35%' }
-  },
-  {
-    id: 'rzai',
-    name: 'RozeAI, Inc.',
-    ticker: 'RZAI',
-    exchange: 'Nasdaq',
-    structure: 'LIVE — Direct Listing',
-    structureType: 'direct',
-    valuation: '—',
-    raise: null,
-    joshPct: '21.6%',
-    joshValue: '2,968,704 shares',
-    joshValueNum: 0,
-    status: '🟢 LIVE TRADING',
-    statusKey: 'live',
-    urgency: 'live',
-    notes_default: 'MavDB holds 2,968,704 shares as nominee for Josh Bartch per Beneficial Ownership & Nominee Agreement. Listed Sep 29, 2026. Total RZAI shares across all holders: 13,761,688. Refuge Capital original position: 2,333,328. F-1 filed Sep 21, 2026 (EDGAR CIK 0001926293). TAAD LLP = auditors (Andy Wang, Victor Wong).',
-    tasks: [
-      { text: 'Monitor share price and volume', assignee: 'George' },
-      { text: 'Revere Securities compliance — proof of acquisition submitted', assignee: 'Josh — IN PROGRESS' },
-      { text: 'Advisory Agreement signed', assignee: 'Josh + Young Jin Cho' },
-      { text: 'Refuge Capital transfers — 1,257,000 shares transferred; 626,328 remaining', assignee: 'Josh' },
-      { text: 'MyCar Enterprises SPA (75,000 shares) — price/share TBD', assignee: 'Josh' },
-      { text: '622 Capital LLC SPA (450,000 shares) — price/share TBD', assignee: 'Josh' },
-      { text: 'McConnell Valdés tax opinion on MavDB nominee structure [(787) 250-5604]', assignee: 'Josh' },
-    ],
-    contacts: [
-      { name: 'Young Jin Cho', role: 'CEO, RozeAI' },
-      { name: 'Devin Cottrell', role: 'Revere Securities — dcottrell@reveresecurities.com' },
-      { name: 'James Cho', role: 'jamescho@rozeai.com' },
-    ],
-    extra: { 'Listed': 'September 29, 2026', 'Josh Shares': '2,968,704 (via MavDB LLC as nominee)', 'Total Shares': '13,761,688', 'Refuge Capital Position': '2,333,328 original; 1,257,000 transferred', 'EDGAR CIK': '0001926293', 'Auditors': 'TAAD LLP (Andy Wang, Victor Wong)' }
-  },
-  {
-    id: 'green-circle',
-    name: 'Green Circle',
-    ticker: '—',
-    exchange: 'Nasdaq',
-    structure: 'PIPE',
-    structureType: 'pipe',
-    valuation: '—',
-    raise: null,
-    joshPct: '—',
-    joshValue: '—',
-    joshValueNum: 0,
-    status: '🟢 LIVE — TRADING TUESDAY',
-    statusKey: 'live',
-    urgency: 'live',
-    notes_default: 'F-1 effective Monday Oct 5 2026. Trading begins Tuesday Oct 6 2026. Watch closely.',
-    tasks: [
-      { text: '✅ F-1 cleared by SEC', assignee: 'SEC', done: true },
-      { text: 'F-1 effective — Monday Oct 5, 2026', assignee: 'SEC' },
-      { text: 'Trading begins — Tuesday Oct 6, 2026', assignee: 'Josh/George' },
-      { text: 'Monitor opening trade', assignee: 'Josh/George' },
-    ],
-    contacts: [],
-    extra: { 'F-1 Effective': 'Monday Oct 5, 2026', 'Trading Start': 'Tuesday Oct 6, 2026' }
-  },
-  {
-    id: 'sugp-pipe',
-    name: 'SUGP PIPE',
-    ticker: 'SUGP',
-    exchange: 'Nasdaq',
-    structure: 'PIPE',
-    structureType: 'pipe',
-    valuation: '$350M',
-    raise: '$10M',
-    joshPct: '35%',
-    joshValue: '$122.5M',
-    joshValueNum: 122.5,
-    status: 'IN PROGRESS',
-    statusKey: 'progress',
-    urgency: 'high',
-    notes_default: '$10M PIPE via Target Capital 1 LLC. 20% OID. Net $8M to company. Linked to SUGP × Cube Group deal.',
-    tasks: [
-      { text: 'See SUGP × Cube Group deal — same transaction', assignee: 'All' },
-    ],
-    contacts: [
-      { name: 'Target Capital 1 LLC', role: 'PIPE Investor' },
-      { name: 'Ross Carmel', role: 'Sichenzia' },
-    ],
-    extra: { 'PIPE Size': '$10M', 'OID': '20% (net $8M to company)', 'Linked Deal': 'SUGP × Cube Group' }
+    notes: 'Dual-structure listing: $75M Project 1 + $225M Project 2 = $300M Master entity (Quantec Holdings). Farm-in JVA structures the mining rights acquisition. RBW Capital engaged as placement agent. Awaiting EIN from IRS to open bank accounts and proceed. Three separate cap tables maintained for each entity.',
   },
   {
     id: 'zkin',
-    name: 'ZKIN',
+    name: 'ZKIN International',
     ticker: 'ZKIN',
     exchange: 'Nasdaq',
-    structure: 'PIPE + Reverse Merger',
-    structureType: 'pipe',
-    valuation: 'TBD',
-    raise: null,
-    joshPct: 'TBD',
-    joshValue: 'TBD',
-    joshValueNum: 0,
-    status: 'DETAILS NEEDED',
-    statusKey: 'needed',
-    urgency: 'high',
-    notes_default: 'New deal added Oct 2 2026. ZKIN is an existing Nasdaq-listed company. Josh to provide full deal structure and terms.',
-    tasks: [
-      { text: 'Josh to provide deal structure and terms', assignee: 'Josh — PENDING' },
-      { text: 'Identify target business/assets for reverse merger', assignee: 'Josh' },
-      { text: 'PIPE investor identification', assignee: 'Josh/MavDB' },
-      { text: 'Legal engagement', assignee: 'Ross Carmel/Sichenzia' },
+    type: 'PIPE + CEO Buyout',
+    value: '$25M',
+    valueNum: 25,
+    status: 'pending',
+    statusLabel: 'Pending',
+    director: 'TBD',
+    directorEmail: '',
+    projected: 'TBD',
+    pipeGross: '$10M',
+    pipeNet: '$8M',
+    pipeNote: 'CEO buyout: $15M',
+    progress: 25,
+    milestones: [
+      { label: 'Term sheet drafted', status: 'done' },
+      { label: 'Term sheet sent to ZKIN', status: 'done' },
+      { label: 'Company response', status: 'pending' },
+      { label: 'Due diligence', status: 'pending' },
+      { label: 'Definitive agreement', status: 'pending' },
+      { label: 'PIPE closing', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'Awaiting company response to term sheet', owner: 'Josh Bartch', priority: 'high' },
+    ],
+    documents: [
+      { name: 'Term Sheet', status: 'signed' },
     ],
     contacts: [
-      { name: 'Ross Carmel', role: 'Sichenzia' },
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+      { name: 'Sign Kadouh', role: 'Deal Operations', email: 'sign.kadouh@gmail.com' },
     ],
-    extra: { 'Added': 'Oct 2, 2026', 'Note': 'Awaiting full terms from Josh' }
+    notes: 'PIPE of $10M combined with CEO control buyout of $15M. Term sheet sent; ball is in ZKIN\'s court. No director assigned yet — contingent on deal moving forward.',
+  },
+  {
+    id: 'secundavida',
+    name: 'SecundaVida Biotech',
+    ticker: '—',
+    exchange: 'Nasdaq Capital Market',
+    type: 'Direct Listing',
+    value: '$400M',
+    valueNum: 400,
+    status: 'pending',
+    statusLabel: 'Pending',
+    director: 'Andrew Parks',
+    directorEmail: 'andrew@ekardpartners.com',
+    projected: '2027–2028',
+    pipeGross: 'TBD',
+    pipeNet: 'TBD',
+    pipeNote: '',
+    progress: 15,
+    milestones: [
+      { label: 'Concept development', status: 'done' },
+      { label: 'Cap table structure', status: 'done' },
+      { label: 'Formation documents', status: 'in-progress' },
+      { label: 'Licensing agreements', status: 'pending' },
+      { label: 'S-1 drafting', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'Andrew Parks — signature on formation docs', owner: 'Andrew Parks', priority: 'high' },
+      { text: 'Licensing agreements — structure and negotiate', owner: 'Josh Bartch', priority: 'medium' },
+    ],
+    documents: [
+      { name: 'Cap Table Structure', status: 'final' },
+      { name: 'Formation Documents', status: 'draft' },
+    ],
+    contacts: [
+      { name: 'Andrew Parks', role: 'Director', email: 'andrew@ekardpartners.com' },
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: 'Biotech direct listing targeting $400M valuation. Blocked on Andrew Parks signing formation documents to incorporate the entity. Licensing agreements need to be structured after formation.',
+  },
+  {
+    id: 'rzai',
+    name: 'RozeAI',
+    ticker: 'RZAI',
+    exchange: 'Nasdaq',
+    type: 'Advisory + Holdings',
+    value: 'Advisory',
+    valueNum: 0,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Josh Bartch',
+    directorEmail: 'bartchjosh@gmail.com',
+    projected: 'Ongoing',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: 'Josh holds 2,968,704 shares',
+    progress: 80,
+    milestones: [
+      { label: 'Advisory agreement executed', status: 'done' },
+      { label: 'Holdings summary documented', status: 'done' },
+      { label: 'Press release draft', status: 'done' },
+      { label: 'Beneficial ownership filing', status: 'done' },
+      { label: 'Press release — final with contract numbers', status: 'in-progress' },
+      { label: 'Revere Securities proof of acquisition', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'Press release needs actual contract numbers', owner: 'Josh Bartch', priority: 'medium' },
+      { text: 'Revere Securities — proof of acquisition documentation', owner: 'Josh Bartch', priority: 'medium' },
+    ],
+    documents: [
+      { name: 'Advisory Agreement', status: 'signed' },
+      { name: 'Holdings Summary', status: 'final' },
+      { name: 'Press Release Draft', status: 'draft' },
+      { name: 'Beneficial Ownership Filing', status: 'filed' },
+    ],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: 'Active advisory engagement. Josh holds 2,968,704 shares of RZAI. Beneficial ownership filing completed. Press release drafted but needs actual contract numbers before publication.',
+  },
+  {
+    id: 'dbgi',
+    name: 'DBGI / Digital Brands Group',
+    ticker: 'DBGI',
+    exchange: 'Nasdaq (delisted)',
+    type: 'Litigation + Holdings',
+    value: '$47.7M',
+    valueNum: 47.7,
+    status: 'litigation',
+    statusLabel: 'Litigation',
+    director: 'Quinn Emanuel',
+    directorEmail: '',
+    projected: 'Litigation timeline',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: 'Claim: Series D + warrants',
+    progress: 60,
+    milestones: [
+      { label: 'Holdings documented', status: 'done' },
+      { label: 'Value tables prepared', status: 'done' },
+      { label: 'Quinn Emanuel retained', status: 'done' },
+      { label: 'Lawsuit filed', status: 'done' },
+      { label: 'Discovery phase', status: 'pending' },
+      { label: 'Trial / settlement', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'Zip file of actual complaint docs from Quinn Emanuel', owner: 'Josh Bartch', priority: 'high' },
+    ],
+    documents: [
+      { name: 'Holdings Documentation', status: 'final' },
+      { name: 'Value Tables', status: 'final' },
+      { name: 'Complaint Filing', status: 'filed' },
+    ],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: '$47.7M claim filed against Digital Brands Group (delisted from Nasdaq). Covers Series D investment and warrants. Quinn Emanuel retained as litigation counsel. Lawsuit filed — awaiting complaint documents from QE.',
+  },
+  {
+    id: 'stratum',
+    name: 'Stratum Oncology',
+    ticker: '—',
+    exchange: 'Nasdaq',
+    type: 'Direct Listing (Drug Resurrection)',
+    value: '$400M',
+    valueNum: 400,
+    status: 'early',
+    statusLabel: 'Early Stage',
+    director: 'TBD',
+    directorEmail: '',
+    projected: '2028',
+    pipeGross: 'TBD',
+    pipeNet: 'TBD',
+    pipeNote: '',
+    progress: 5,
+    milestones: [
+      { label: 'Concept development', status: 'done' },
+      { label: 'Drug candidate identification', status: 'pending' },
+      { label: 'IP acquisition', status: 'pending' },
+      { label: 'Formation', status: 'pending' },
+    ],
+    outstanding: [],
+    documents: [],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: 'Drug resurrection play targeting oncology space. Early-stage concept. Director and drug candidate TBD. Targeting 2028 Nasdaq listing at $400M valuation.',
+  },
+  {
+    id: 'cogniveil',
+    name: 'Cogniveil Therapeutics',
+    ticker: '—',
+    exchange: 'Nasdaq',
+    type: 'Direct Listing (Drug Resurrection)',
+    value: '$400M',
+    valueNum: 400,
+    status: 'early',
+    statusLabel: 'Early Stage',
+    director: 'TBD',
+    directorEmail: '',
+    projected: '2028',
+    pipeGross: 'TBD',
+    pipeNet: 'TBD',
+    pipeNote: '',
+    progress: 5,
+    milestones: [
+      { label: 'Concept development', status: 'done' },
+      { label: 'Drug candidate identification', status: 'pending' },
+      { label: 'IP acquisition', status: 'pending' },
+      { label: 'Formation', status: 'pending' },
+    ],
+    outstanding: [],
+    documents: [],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: 'Drug resurrection play — therapeutics focus TBD. Early-stage concept. Director and drug candidate TBD. Targeting 2028 Nasdaq listing at $400M valuation.',
+  },
+  {
+    id: 'resilion',
+    name: 'Resilion Therapeutics',
+    ticker: '—',
+    exchange: 'Nasdaq',
+    type: 'Direct Listing (Drug Resurrection)',
+    value: '$400M',
+    valueNum: 400,
+    status: 'early',
+    statusLabel: 'Early Stage',
+    director: 'TBD',
+    directorEmail: '',
+    projected: '2028',
+    pipeGross: 'TBD',
+    pipeNet: 'TBD',
+    pipeNote: '',
+    progress: 8,
+    milestones: [
+      { label: 'Concept development', status: 'done' },
+      { label: 'BNC-210 acquisition target identified', status: 'in-progress', note: 'URGENT — Neuphoria strategic review' },
+      { label: 'IP acquisition', status: 'pending' },
+      { label: 'Formation', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'BNC-210 acquisition — URGENT. Neuphoria is undergoing strategic review. Window to acquire.', owner: 'Josh Bartch', priority: 'high' },
+    ],
+    documents: [],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: 'Drug resurrection play targeting BNC-210 compound (anxiety/PTSD). URGENT: Neuphoria Therapeutics is undergoing a strategic review, creating a time-sensitive window to acquire the BNC-210 asset. Early-stage but requires immediate action on IP acquisition.',
+  },
+  {
+    id: 'yqai',
+    name: 'YQAI',
+    ticker: 'YQAI',
+    exchange: 'OTC',
+    type: 'Holdings',
+    value: 'Holdings',
+    valueNum: 0,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Josh Bartch',
+    directorEmail: 'bartchjosh@gmail.com',
+    projected: 'Ongoing',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: '',
+    progress: 50,
+    milestones: [
+      { label: 'Position established', status: 'done' },
+      { label: 'SPA documented', status: 'done' },
+      { label: 'RRA documented', status: 'done' },
+      { label: 'Monitoring', status: 'in-progress' },
+    ],
+    outstanding: [],
+    documents: [
+      { name: 'SPA', status: 'signed' },
+      { name: 'RRA', status: 'signed' },
+    ],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: 'Holdings position in YQAI. SPA and RRA documented.',
+  },
+  {
+    id: 'scp',
+    name: 'SCP / Scalare Partners',
+    ticker: 'SCP',
+    exchange: 'ASX',
+    type: 'Advisory + Marketing',
+    value: 'Advisory',
+    valueNum: 0,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Josh Bartch',
+    directorEmail: 'bartchjosh@gmail.com',
+    projected: 'Ongoing',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: '',
+    progress: 60,
+    milestones: [
+      { label: 'Marketing campaign designed', status: 'done' },
+      { label: 'Investor awareness deck', status: 'done' },
+      { label: 'Campaign execution', status: 'in-progress' },
+    ],
+    outstanding: [],
+    documents: [
+      { name: 'Marketing Deck', status: 'final' },
+      { name: 'Investor Awareness Deck', status: 'final' },
+    ],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: 'ASX-listed advisory and marketing engagement. Investor awareness campaign in execution.',
+  },
+  {
+    id: 'horizen',
+    name: 'Horizen Labs',
+    ticker: '—',
+    exchange: 'Private',
+    type: 'Advisory Agreement',
+    value: 'Advisory',
+    valueNum: 0,
+    status: 'in-progress',
+    statusLabel: 'In Progress',
+    director: 'Josh Bartch',
+    directorEmail: 'bartchjosh@gmail.com',
+    projected: 'Ongoing',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: '',
+    progress: 40,
+    milestones: [
+      { label: 'Advisory agreement drafted', status: 'done' },
+      { label: 'Ross Carmel redline received', status: 'done' },
+      { label: 'Sign Kadouh reviewing clean-up', status: 'in-progress' },
+      { label: 'Agreement execution', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'Advisory agreement — clean up redline from Ross Carmel', owner: 'Sign Kadouh', priority: 'medium' },
+    ],
+    documents: [
+      { name: 'Advisory Agreement', status: 'draft' },
+      { name: 'Ross Carmel Redline', status: 'draft' },
+    ],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+      { name: 'Sign Kadouh', role: 'Deal Operations', email: 'sign.kadouh@gmail.com' },
+      { name: 'Ross Carmel', role: 'Attorney, SRFC', email: 'rcarmel@srfc.law' },
+    ],
+    notes: 'Advisory agreement with Horizen Labs. Ross Carmel (Sichenzia) sent redlined version. Standing by for direction from Josh/Sign on whether George should clean it up.',
+  },
+  {
+    id: 'gcdt',
+    name: 'GCDT / Green Circle',
+    ticker: 'GCDT',
+    exchange: 'NYSE American',
+    type: 'PIPE + Advisory',
+    value: 'PIPE',
+    valueNum: 0,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Josh Bartch',
+    directorEmail: 'bartchjosh@gmail.com',
+    projected: 'Ongoing',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: 'F-1 resale registration filed Oct 14, 2026',
+    progress: 50,
+    milestones: [
+      { label: 'Position established', status: 'done' },
+      { label: 'F-1 resale registration filed', status: 'done', note: 'Oct 14, 2026 — Target Capital + Square Gate' },
+      { label: 'Monitoring', status: 'in-progress' },
+    ],
+    outstanding: [],
+    documents: [
+      { name: 'F-1 Registration Statement', status: 'filed' },
+    ],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: 'F-1 resale registration filed Oct 14, 2026 for Target Capital and Square Gate. 1-for-6 reverse split effective Oct 7. AI data center pivot announcement caused -45% drop.',
   },
 ];
 
-// ─── STATE ───
+// ═══════════════════════════════════════════════════════════════
+// STATUS MAP
+// ═══════════════════════════════════════════════════════════════
+const STATUS_CONFIG = {
+  'active':      { label: 'Active',      class: 'active',      color: 'var(--accent-green)' },
+  'in-progress': { label: 'In Progress', class: 'in-progress', color: 'var(--accent-blue)' },
+  'pending':     { label: 'Pending',     class: 'pending',     color: 'var(--accent-amber)' },
+  'blocked':     { label: 'Blocked',     class: 'blocked',     color: 'var(--accent-red)' },
+  'litigation':  { label: 'Litigation',  class: 'litigation',  color: 'var(--accent-red)' },
+  'early':       { label: 'Early Stage', class: 'early',       color: 'var(--accent-purple)' },
+};
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER ENGINE
+// ═══════════════════════════════════════════════════════════════
 let currentFilter = 'all';
-let currentDealId = null;
+let currentSearch = '';
+let currentDealIndex = -1;
 
-// ─── LOCALSTORAGE HELPERS ───
-function lsKey(dealId, type) { return `mavdb_${dealId}_${type}`; }
-function getTaskDone(dealId, idx, defaultDone) {
-  const k = lsKey(dealId, `task_${idx}`);
-  const v = localStorage.getItem(k);
-  if (v === null) return !!defaultDone;
-  return v === 'true';
-}
-function setTaskDone(dealId, idx, val) {
-  localStorage.setItem(lsKey(dealId, `task_${idx}`), val ? 'true' : 'false');
-}
-function getNotes(dealId, defaultVal) {
-  const v = localStorage.getItem(lsKey(dealId, 'notes'));
-  return v === null ? defaultVal : v;
-}
-function setNotes(dealId, val) {
-  localStorage.setItem(lsKey(dealId, 'notes'), val);
-}
-function getStatus(dealId, defaultVal) {
-  return localStorage.getItem(lsKey(dealId, 'status')) || defaultVal;
-}
-function setStatus(dealId, val) {
-  localStorage.setItem(lsKey(dealId, 'status'), val);
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
 }
 
-// ─── STATS ───
-function computeStats() {
-  let joshTotal = 0;
-  let urgentCount = 0;
-  let liveCount = 0;
-  let activeCount = 0;
-  const seen = new Set();
+function formatValue(v) {
+  return v;
+}
+
+function getFilteredDeals() {
+  return DEALS.filter(d => {
+    const matchFilter = currentFilter === 'all' || d.status === currentFilter;
+    const q = currentSearch.toLowerCase();
+    const matchSearch = !q ||
+      d.name.toLowerCase().includes(q) ||
+      d.ticker.toLowerCase().includes(q) ||
+      d.type.toLowerCase().includes(q) ||
+      d.director.toLowerCase().includes(q) ||
+      d.exchange.toLowerCase().includes(q);
+    return matchFilter && matchSearch;
+  });
+}
+
+function renderStats() {
+  const counts = { active: 0, pending: 0, early: 0, litigation: 0 };
+  let totalVal = 0;
   DEALS.forEach(d => {
-    if (!seen.has(d.id)) {
-      seen.add(d.id);
-      if (d.joshValueNum > 0) joshTotal += d.joshValueNum;
-      if (d.urgency === 'critical' || d.urgency === 'high') urgentCount++;
-      if (d.urgency === 'live') liveCount++;
-      if (d.statusKey !== 'needed') activeCount++;
-    }
-  });
-  document.getElementById('statActive').textContent = activeCount;
-  document.getElementById('statJosh').textContent = '$' + joshTotal.toFixed(1) + 'M';
-  document.getElementById('statUrgent').textContent = urgentCount;
-  document.getElementById('statLive').textContent = liveCount;
-}
-
-// ─── TASK PROGRESS ───
-function getTaskProgress(deal) {
-  let done = 0;
-  deal.tasks.forEach((t, i) => { if (getTaskDone(deal.id, i, t.done)) done++; });
-  return { done, total: deal.tasks.length };
-}
-
-// ─── RENDER CARDS ───
-function renderCards() {
-  const grid = document.getElementById('dealsGrid');
-  grid.innerHTML = '';
-  let shown = 0;
-  DEALS.forEach(deal => {
-    const show = currentFilter === 'all'
-      || (currentFilter === 'direct' && deal.structureType === 'direct')
-      || (currentFilter === 'pipe' && deal.structureType === 'pipe')
-      || (currentFilter === 'urgent' && (deal.urgency === 'critical' || deal.urgency === 'high' || deal.urgency === 'live'));
-    if (!show) return;
-    shown++;
-    const prog = getTaskProgress(deal);
-    const pct = prog.total > 0 ? Math.round((prog.done / prog.total) * 100) : 0;
-    const urgencyLabel = deal.urgency === 'critical' ? '🔴 Critical'
-      : deal.urgency === 'high' ? '⚠️ High'
-      : deal.urgency === 'live' ? '🟢 Live'
-      : '🔵 Medium';
-    const statusBadgeClass = deal.statusKey === 'live' ? 'badge-status-live'
-      : deal.statusKey === 'needed' ? 'badge-status-needed'
-      : 'badge-status-progress';
-    const currentStatus = getStatus(deal.id, deal.status);
-
-    const card = document.createElement('div');
-    card.className = `deal-card urgency-${deal.urgency}`;
-    card.dataset.id = deal.id;
-    card.innerHTML = `
-      <div class="card-top">
-        <div class="card-name">${deal.name}</div>
-        <div class="urgency-flag ${deal.urgency}">${urgencyLabel}</div>
-      </div>
-      <div class="card-ticker">${deal.ticker} · ${deal.exchange}</div>
-      <div class="card-badges">
-        <span class="badge badge-structure">${deal.structure}</span>
-        <span class="badge ${statusBadgeClass}">${currentStatus}</span>
-      </div>
-      <div class="card-financials">
-        <div class="card-fin-item">
-          <div class="card-fin-label">Valuation</div>
-          <div class="card-fin-value">${deal.valuation}</div>
-        </div>
-        <div class="card-fin-item">
-          <div class="card-fin-label">Josh Equity</div>
-          <div class="card-fin-value gold">${deal.joshValue}</div>
-        </div>
-        ${deal.joshPct !== '—' && deal.joshPct !== 'TBD' ? `
-        <div class="card-fin-item">
-          <div class="card-fin-label">Josh %</div>
-          <div class="card-fin-value">${deal.joshPct}</div>
-        </div>` : ''}
-        ${deal.raise ? `
-        <div class="card-fin-item">
-          <div class="card-fin-label">Raise</div>
-          <div class="card-fin-value">${deal.raise}</div>
-        </div>` : ''}
-      </div>
-      ${deal.id === 'rzai' ? `<div style="margin:8px 0 4px;padding:6px 10px;background:rgba(46,204,113,0.12);border:1px solid rgba(46,204,113,0.3);border-radius:6px;font-size:11px;color:#2ECC71;display:flex;align-items:center;justify-content:space-between;"><span>🟢 Live Price Feed</span><a href="https://finance.yahoo.com/quote/RZAI/" target="_blank" style="color:#2ECC71;text-decoration:underline;font-size:11px;" onclick="event.stopPropagation()">View Chart ↗</a></div>` : ''}
-      <div class="card-footer">
-        <div class="task-progress">
-          <div>${prog.done}/${prog.total} tasks</div>
-          <div class="task-bar"><div class="task-bar-fill" style="width:${pct}%"></div></div>
-        </div>
-        <div class="card-expand">View Details →</div>
-      </div>
-    `;
-    card.addEventListener('click', () => openModal(deal.id));
-    grid.appendChild(card);
+    if (d.status === 'active') counts.active++;
+    else if (d.status === 'pending' || d.status === 'in-progress') counts.pending++;
+    else if (d.status === 'early') counts.early++;
+    else if (d.status === 'litigation' || d.status === 'blocked') counts.litigation++;
+    totalVal += d.valueNum;
   });
 
-  const label = currentFilter === 'all' ? 'Showing all deals'
-    : currentFilter === 'direct' ? 'Direct Listings'
-    : currentFilter === 'pipe' ? 'PIPE / Reverse Mergers'
-    : '🔴 Urgent & Critical Deals';
-  document.getElementById('sectionLabel').textContent = label;
-  document.getElementById('countBadge').textContent = shown + (shown === 1 ? ' deal' : ' deals');
+  document.getElementById('total-value').textContent = '$' + (totalVal >= 1000 ? (totalVal / 1000).toFixed(1) + 'B' : totalVal + 'M');
 
-  if (shown === 0) {
-    grid.innerHTML = '<div class="empty-state"><div class="icon">📋</div><div>No deals match this filter.</div></div>';
-  }
-}
-
-// ─── FILTER ───
-function setFilter(f, btn) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderCards();
-}
-
-// ─── MODAL ───
-function openModal(id) {
-  const deal = DEALS.find(d => d.id === id);
-  if (!deal) return;
-  currentDealId = id;
-
-  document.getElementById('modalTitle').textContent = deal.name;
-  document.getElementById('modalSub').textContent = `${deal.ticker} · ${deal.exchange} · ${deal.structure}`;
-
-  const urg = document.getElementById('modalUrgency');
-  const urgLabels = { critical: '🔴 Critical Priority', high: '⚠️ High Priority', medium: '🔵 Medium Priority', live: '🟢 Live — Trading' };
-  urg.textContent = urgLabels[deal.urgency] || deal.urgency;
-  urg.className = `modal-urgency ${deal.urgency}`;
-
-  const body = document.getElementById('modalBody');
-  const currentStatus = getStatus(deal.id, deal.status);
-  const currentNotes = getNotes(deal.id, deal.notes_default);
-
-  // Build extra fields
-  const extraHTML = Object.entries(deal.extra || {}).map(([k,v]) => `
-    <div class="ov-item">
-      <div class="ov-label">${k}</div>
-      <div class="ov-value">${v}</div>
-    </div>`).join('');
-
-  // Build tasks HTML
-  const tasksHTML = deal.tasks.map((t, i) => {
-    const done = getTaskDone(deal.id, i, t.done);
-    return `
-      <div class="task-item${done ? ' done' : ''}" id="task-item-${id}-${i}">
-        <input type="checkbox" class="task-cb" ${done ? 'checked' : ''} onchange="toggleTask('${id}', ${i}, this)"/>
-        <span class="task-text${done ? ' done' : ''}" id="task-text-${id}-${i}">${t.text}</span>
-        ${t.assignee ? `<span class="task-assignee">${t.assignee}</span>` : ''}
-      </div>`;
-  }).join('');
-
-  const contactsHTML = deal.contacts.length
-    ? deal.contacts.map(c => `
-      <div class="contact-item">
-        <div class="contact-dot"></div>
-        <span><strong>${c.name}</strong>${c.role ? `<span class="contact-role">— ${c.role}</span>` : ''}</span>
-      </div>`).join('')
-    : '<div style="color:var(--white-dim);font-size:13px;">No contacts listed.</div>';
-
-  body.innerHTML = `
-    <!-- OVERVIEW -->
-    <div class="modal-section">
-      <div class="section-title">Deal Overview</div>
-      <div class="overview-grid">
-        <div class="ov-item">
-          <div class="ov-label">Valuation</div>
-          <div class="ov-value big gold">${deal.valuation}</div>
-        </div>
-        <div class="ov-item">
-          <div class="ov-label">Josh Equity Value</div>
-          <div class="ov-value big gold">${deal.joshValue}</div>
-        </div>
-        <div class="ov-item">
-          <div class="ov-label">Josh Ownership</div>
-          <div class="ov-value">${deal.joshPct}</div>
-        </div>
-        ${deal.raise ? `<div class="ov-item"><div class="ov-label">Raise Target</div><div class="ov-value">${deal.raise}</div></div>` : ''}
-        <div class="ov-item">
-          <div class="ov-label">Structure</div>
-          <div class="ov-value">${deal.structure}</div>
-        </div>
-        <div class="ov-item">
-          <div class="ov-label">Exchange</div>
-          <div class="ov-value">${deal.exchange}</div>
-        </div>
-        ${extraHTML}
-        <div class="ov-item" style="grid-column:1/-1">
-          <div class="ov-label">Status</div>
-          <select class="status-select" id="status-select-${id}" onchange="updateStatus('${id}', this.value)">
-            <option value="IN PROGRESS" ${currentStatus === 'IN PROGRESS' ? 'selected' : ''}>IN PROGRESS</option>
-            <option value="DETAILS NEEDED" ${currentStatus === 'DETAILS NEEDED' ? 'selected' : ''}>DETAILS NEEDED</option>
-            <option value="🟢 LIVE TRADING" ${currentStatus === '🟢 LIVE TRADING' ? 'selected' : ''}>🟢 LIVE TRADING</option>
-            <option value="🟢 LIVE — TRADING TUESDAY" ${currentStatus === '🟢 LIVE — TRADING TUESDAY' ? 'selected' : ''}>🟢 LIVE — TRADING TUESDAY</option>
-            <option value="ON HOLD" ${currentStatus === 'ON HOLD' ? 'selected' : ''}>ON HOLD</option>
-            <option value="COMPLETED" ${currentStatus === 'COMPLETED' ? 'selected' : ''}>COMPLETED</option>
-            <option value="CANCELLED" ${currentStatus === 'CANCELLED' ? 'selected' : ''}>CANCELLED</option>
-          </select>
-        </div>
+  const bar = document.getElementById('stats-bar');
+  bar.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-icon green">⚡</div>
+      <div class="stat-info">
+        <div class="stat-value">${counts.active}</div>
+        <div class="stat-label">Active Deals</div>
       </div>
     </div>
-
-    <!-- TASKS -->
-    <div class="modal-section">
-      <div class="section-title">Tasks & Checklist</div>
-      <div class="task-list">${tasksHTML}</div>
+    <div class="stat-card">
+      <div class="stat-icon amber">⏳</div>
+      <div class="stat-info">
+        <div class="stat-value">${counts.pending}</div>
+        <div class="stat-label">Pending</div>
+      </div>
     </div>
-
-    <!-- CONTACTS -->
-    ${deal.contacts.length ? `
-    <div class="modal-section">
-      <div class="section-title">Key Contacts</div>
-      <div class="contacts-list">${contactsHTML}</div>
-    </div>` : ''}
-
-    <!-- NOTES -->
-    <div class="modal-section">
-      <div class="section-title">Notes</div>
-      <textarea class="notes-area" id="notes-${id}" placeholder="Add deal notes...">${currentNotes}</textarea>
-      <div class="notes-saved" id="notes-saved-${id}">✓ Saved</div>
+    <div class="stat-card">
+      <div class="stat-icon blue">🔬</div>
+      <div class="stat-info">
+        <div class="stat-value">${counts.early}</div>
+        <div class="stat-label">Early Stage</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red">⚖️</div>
+      <div class="stat-info">
+        <div class="stat-value">${counts.litigation}</div>
+        <div class="stat-label">Litigation</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">📊</div>
+      <div class="stat-info">
+        <div class="stat-value">${DEALS.length}</div>
+        <div class="stat-label">Total Deals</div>
+      </div>
     </div>
   `;
+}
 
-  // TradingView widget for RZAI
-  if (deal.id === 'rzai') {
-    const tvContainer = document.createElement('div');
-    tvContainer.className = 'modal-section';
-    tvContainer.innerHTML = `
-      <div class="section-title">📈 Live Price Chart — RZAI</div>
-      <div class="tradingview-widget-container" style="border-radius:8px;overflow:hidden;">
-        <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-        {
-          "symbol": "NASDAQ:RZAI",
-          "width": "100%",
-          "height": 220,
-          "locale": "en",
-          "dateRange": "1D",
-          "colorTheme": "dark",
-          "isTransparent": true,
-          "autosize": true,
-          "largeChartUrl": "https://www.tradingview.com/chart/?symbol=NASDAQ:RZAI"
-        }
-        <\/script>
-      </div>
-    `;
-    body.insertBefore(tvContainer, body.firstChild);
+function renderFilters() {
+  const statuses = ['all', 'active', 'pending', 'early', 'litigation'];
+  const labels = { all: 'All Deals', active: 'Active', pending: 'Pending', early: 'Early Stage', litigation: 'Litigation' };
+  const group = document.getElementById('filter-group');
+  group.innerHTML = statuses.map(s =>
+    `<button class="filter-btn ${currentFilter === s ? 'active' : ''}" onclick="setFilter('${s}')">${labels[s]}</button>`
+  ).join('');
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  renderFilters();
+  renderGrid();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('deals-grid');
+  const deals = getFilteredDeals();
+
+  if (!deals.length) {
+    grid.innerHTML = '<div class="no-results"><div class="nr-icon">🔍</div><div class="nr-text">No deals match your search</div></div>';
+    return;
   }
 
-  // Attach notes save on blur
-  const ta = document.getElementById(`notes-${id}`);
-  ta.addEventListener('blur', () => {
-    setNotes(id, ta.value);
-    const sv = document.getElementById(`notes-saved-${id}`);
-    sv.classList.add('show');
-    setTimeout(() => sv.classList.remove('show'), 2000);
-  });
+  grid.innerHTML = deals.map((d, i) => {
+    const sc = STATUS_CONFIG[d.status];
+    return `
+    <div class="deal-card" data-status="${d.status}" style="animation-delay: ${i * 0.06}s" onclick="openDetail('${d.id}')">
+      <div class="card-top">
+        <div>
+          <div class="deal-name">${d.name}</div>
+          ${d.ticker !== '—' ? `<div class="deal-ticker">${d.ticker}</div>` : ''}
+        </div>
+        <span class="status-badge ${sc.class}"><span class="dot"></span>${sc.label}</span>
+      </div>
+      <div class="card-meta">
+        <span class="meta-tag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          ${d.exchange}
+        </span>
+        <span class="meta-tag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          ${d.type}
+        </span>
+      </div>
+      <div class="card-value">${d.value}</div>
+      <div class="progress-section">
+        <div class="progress-label">
+          <span>Completion</span>
+          <span>${d.progress}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" data-width="${d.progress}"></div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="director-info">
+          <div class="director-avatar">${initials(d.director)}</div>
+          <span class="director-name">${d.director}</span>
+        </div>
+        <span class="projected-date">${d.projected}</span>
+      </div>
+    </div>`;
+  }).join('');
 
-  document.getElementById('modalOverlay').classList.add('open');
+  // Animate progress bars
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      grid.querySelectorAll('.progress-fill').forEach(el => {
+        el.style.width = el.dataset.width + '%';
+      });
+    }, 100);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DETAIL VIEW
+// ═══════════════════════════════════════════════════════════════
+function openDetail(id) {
+  const idx = DEALS.findIndex(d => d.id === id);
+  if (idx === -1) return;
+  currentDealIndex = idx;
+  renderDetail(DEALS[idx]);
+  document.getElementById('detail-view').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
+function closeDetail() {
+  document.getElementById('detail-view').classList.remove('open');
   document.body.style.overflow = '';
-  currentDealId = null;
-  renderCards(); // refresh progress bars
+  currentDealIndex = -1;
 }
 
-function closeModalOnOverlay(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
+function navDeal(dir) {
+  const newIdx = currentDealIndex + dir;
+  if (newIdx < 0 || newIdx >= DEALS.length) return;
+  currentDealIndex = newIdx;
+  renderDetail(DEALS[newIdx]);
+  document.getElementById('detail-view').scrollTop = 0;
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+function renderDetail(d) {
+  const sc = STATUS_CONFIG[d.status];
 
-// ─── TASK TOGGLE ───
-function toggleTask(dealId, idx, cb) {
-  setTaskDone(dealId, idx, cb.checked);
-  const item = document.getElementById(`task-item-${dealId}-${idx}`);
-  const text = document.getElementById(`task-text-${dealId}-${idx}`);
-  if (cb.checked) { item.classList.add('done'); text.classList.add('done'); }
-  else { item.classList.remove('done'); text.classList.remove('done'); }
+  // Header
+  document.getElementById('detail-name').textContent = d.name;
+  document.getElementById('detail-ticker').textContent = d.ticker !== '—' ? d.ticker : 'Pre-Ticker';
+  document.getElementById('detail-exchange').textContent = d.exchange;
+  document.getElementById('detail-status-badge').innerHTML = `<span class="status-badge ${sc.class}"><span class="dot"></span>${sc.label}</span>`;
+
+  // Progress ring
+  const circumference = 2 * Math.PI * 28;
+  const offset = circumference - (d.progress / 100) * circumference;
+  document.getElementById('detail-progress-ring').innerHTML = `
+    <div class="progress-circle">
+      <svg width="70" height="70" viewBox="0 0 70 70">
+        <circle class="bg" cx="35" cy="35" r="28" fill="none" stroke-width="5"/>
+        <circle class="fg" cx="35" cy="35" r="28" fill="none" stroke="${sc.color}" stroke-width="5"
+          stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}" stroke-linecap="round"
+          style="stroke-dashoffset: ${offset}"/>
+      </svg>
+      <div class="pct">${d.progress}%</div>
+    </div>
+  `;
+
+  // Nav buttons
+  document.getElementById('btn-prev').style.visibility = currentDealIndex > 0 ? 'visible' : 'hidden';
+  document.getElementById('btn-next').style.visibility = currentDealIndex < DEALS.length - 1 ? 'visible' : 'hidden';
+
+  // Body sections
+  const body = document.getElementById('detail-body');
+  let html = '';
+
+  // Key Metrics
+  html += `
+    <div class="detail-section">
+      <div class="section-title"><span class="icon">📊</span> Key Metrics</div>
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <div class="metric-label">Transaction Value</div>
+          <div class="metric-value">${d.value}</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">PIPE Gross</div>
+          <div class="metric-value">${d.pipeGross}</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">PIPE Net</div>
+          <div class="metric-value">${d.pipeNet}</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">Projected</div>
+          <div class="metric-value">${d.projected}</div>
+        </div>
+        ${d.pipeNote ? `<div class="metric-item"><div class="metric-label">Note</div><div class="metric-value" style="font-size:0.85rem">${d.pipeNote}</div></div>` : ''}
+      </div>
+    </div>
+  `;
+
+  // Contacts
+  html += `
+    <div class="detail-section">
+      <div class="section-title"><span class="icon">👥</span> Key Contacts</div>
+      <div class="contacts-grid">
+        ${d.contacts.map(c => `
+          <div class="contact-card">
+            <div class="contact-avatar">${initials(c.name)}</div>
+            <div class="contact-info">
+              <div class="contact-name">${c.name}</div>
+              <div class="contact-role">${c.role}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  // Milestones
+  html += `
+    <div class="detail-section full-width">
+      <div class="section-title"><span class="icon">🎯</span> Milestone Tracker</div>
+      <ul class="milestone-list">
+        ${d.milestones.map(m => {
+          const icon = m.status === 'done' ? '✓' : m.status === 'in-progress' ? '◉' : m.status === 'blocked' ? '✕' : '○';
+          return `
+            <li class="milestone-item">
+              <div class="milestone-dot ${m.status}">${icon}</div>
+              <div class="milestone-text">
+                <div class="ms-label">${m.label}</div>
+                ${m.note ? `<div class="ms-date">${m.note}</div>` : ''}
+              </div>
+            </li>
+          `;
+        }).join('')}
+      </ul>
+    </div>
+  `;
+
+  // Outstanding Tasks
+  if (d.outstanding.length) {
+    html += `
+      <div class="detail-section">
+        <div class="section-title"><span class="icon">⚡</span> Outstanding Tasks</div>
+        <ul class="task-list">
+          ${d.outstanding.map(t => `
+            <li class="task-item">
+              <div class="task-check"></div>
+              <div class="task-content">
+                <div class="task-text">${t.text}</div>
+                <div class="task-meta">
+                  <span class="task-owner">→ ${t.owner}</span>
+                  <span class="task-priority priority-${t.priority}">${t.priority}</span>
+                </div>
+              </div>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    `;
+  }
+
+  // Documents
+  if (d.documents.length) {
+    html += `
+      <div class="detail-section">
+        <div class="section-title"><span class="icon">📄</span> Documents</div>
+        <ul class="doc-list">
+          ${d.documents.map(doc => `
+            <li class="doc-item">
+              <span class="doc-name"><span class="doc-icon">📋</span> ${doc.name}</span>
+              <span class="doc-status ${doc.status}">${doc.status}</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    `;
+  }
+
+  // Notes
+  if (d.notes) {
+    html += `
+      <div class="detail-section full-width">
+        <div class="section-title"><span class="icon">📝</span> Notes & Context</div>
+        <div class="notes-content"><p>${d.notes}</p></div>
+      </div>
+    `;
+  }
+
+  body.innerHTML = html;
 }
 
-// ─── STATUS UPDATE ───
-function updateStatus(dealId, val) {
-  setStatus(dealId, val);
-}
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+function init() {
+  // Timestamp
+  const now = new Date();
+  document.getElementById('last-updated').textContent = now.toLocaleDateString('en-US', {
+    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
 
-// ─── COPY LINK ───
-function copyLink() {
-  navigator.clipboard.writeText(window.location.href).then(() => {
-    const btn = document.querySelector('.btn-copy');
-    btn.textContent = '✓ Copied!';
-    btn.classList.add('copied');
-    setTimeout(() => {
-      btn.innerHTML = '<span>🔗</span> Copy Link';
-      btn.classList.remove('copied');
-    }, 2000);
+  renderStats();
+  renderFilters();
+  renderGrid();
+
+  // Search
+  document.getElementById('search-input').addEventListener('input', (e) => {
+    currentSearch = e.target.value;
+    renderGrid();
+  });
+
+  // Keyboard nav
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('detail-view').classList.contains('open')) {
+      closeDetail();
+    }
   });
 }
 
-// ─── INIT ───
-function init() {
-  computeStats();
-  renderCards();
-  const now = new Date();
-  document.getElementById('lastUpdated').textContent = 'Updated ' + now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+init();
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// LIVE MARKET DATA
+// ═══════════════════════════════════════════════════════════════
+const LIVE_TICKERS = [
+  { symbol: 'SUGP', exchange: 'Nasdaq' },
+  { symbol: 'RZAI', exchange: 'Nasdaq' },
+  { symbol: 'ZKIN', exchange: 'Nasdaq' },
+  { symbol: 'GCDT', exchange: 'NYSE' },
+  { symbol: 'YQAI', exchange: 'OTC' },
+  { symbol: 'SCP.AX', display: 'SCP', exchange: 'ASX' },
+];
+
+async function fetchQuotes() {
+  const container = document.getElementById('ticker-data');
+  if (!container) return;
+  try {
+    const symbols = LIVE_TICKERS.map(t => t.symbol).join(',');
+    const resp = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`);
+    if (resp.ok) {
+      const data = await resp.json();
+      const quotes = data.quoteResponse?.result || [];
+      container.innerHTML = quotes.map(q => {
+        const ticker = LIVE_TICKERS.find(t => t.symbol === q.symbol);
+        const name = ticker?.display || q.symbol;
+        const price = q.regularMarketPrice?.toFixed(2) || '—';
+        const change = q.regularMarketChange?.toFixed(2) || '0.00';
+        const pct = q.regularMarketChangePercent?.toFixed(2) || '0.00';
+        const vol = q.regularMarketVolume ? (q.regularMarketVolume > 1e6 ? (q.regularMarketVolume/1e6).toFixed(1)+'M' : (q.regularMarketVolume/1e3).toFixed(0)+'K') : '—';
+        const up = q.regularMarketChange >= 0;
+        const c = up ? '#10B981' : '#EF4444';
+        const a = up ? '▲' : '▼';
+        return `<div style="display:flex;align-items:center;gap:8px;white-space:nowrap;padding:4px 12px;background:rgba(255,255,255,0.03);border-radius:6px;">
+          <span style="color:#F1F5F9;font-weight:600;">${name}</span>
+          <span style="color:#F1F5F9;">$${price}</span>
+          <span style="color:${c};font-size:12px;">${a} ${change} (${pct}%)</span>
+          <span style="color:#64748B;font-size:11px;">Vol: ${vol}</span>
+        </div>`;
+      }).join('');
+    } else { showFallback(container); }
+  } catch(e) { showFallback(container); }
 }
 
-init();
+function showFallback(container) {
+  container.innerHTML = LIVE_TICKERS.map(t => {
+    const name = t.display || t.symbol;
+    return `<a href="https://finance.yahoo.com/quote/${t.symbol}" target="_blank" style="text-decoration:none;display:flex;align-items:center;gap:6px;white-space:nowrap;padding:4px 12px;background:rgba(255,255,255,0.03);border-radius:6px;">
+      <span style="color:#F1F5F9;font-weight:600;">${name}</span>
+      <span style="color:#64748B;font-size:11px;">${t.exchange}</span>
+    </a>`;
+  }).join('');
+}
+
+fetchQuotes();
+setInterval(fetchQuotes, 60000);
 </script>
 </body>
 </html>
