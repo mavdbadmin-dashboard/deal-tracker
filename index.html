@@ -992,7 +992,7 @@ body {
 const DEALS = [
   {
     id: 'sugp',
-    name: 'SUGP × Hypertrust Holdings',
+    name: 'SUGP × AzaCore Therapeutics',
     ticker: 'SUGP',
     exchange: 'Nasdaq',
     type: 'Reverse Merger + PIPE',
@@ -1036,7 +1036,7 @@ const DEALS = [
       { name: 'Ross Carmel', role: 'Attorney, SRFC', email: 'rcarmel@srfc.law' },
       { name: 'Sign Kadouh', role: 'Deal Operations', email: 'sign.kadouh@gmail.com' },
     ],
-    notes: 'Post-transaction target valuation ~$350M. PIPE structured with 20% OID ($10M gross / $8M net). Pending definitive agreement before PIPE can close. Cap table nearly finalized — awaiting several entity addresses for completion. Steve Mynott leading Hypertrust side; needs to provide EIN for the new entity.',
+    notes: 'Reverse merger: AzaCore Therapeutics merging into SUGP shell. Post-transaction target valuation ~$350M. PIPE structured with 20% OID ($10M gross / $8M net). Pending definitive agreement before PIPE can close. Cap table nearly finalized — awaiting several entity addresses for completion. Steve Mynott leading operations; needs to provide EIN for the new entity.',
   },
   {
     id: 'azlc',
@@ -1144,10 +1144,10 @@ const DEALS = [
   },
   {
     id: 'zkin',
-    name: 'ZKIN International',
+    name: 'ZKIN × Hypertrust Holdings',
     ticker: 'ZKIN',
     exchange: 'Nasdaq',
-    type: 'PIPE + CEO Buyout',
+    type: 'Reverse Merger + PIPE + CEO Buyout',
     value: '$25M',
     valueNum: 25,
     status: 'pending',
@@ -1177,7 +1177,7 @@ const DEALS = [
       { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
       { name: 'Sign Kadouh', role: 'Deal Operations', email: 'sign.kadouh@gmail.com' },
     ],
-    notes: 'PIPE of $10M combined with CEO control buyout of $15M. Term sheet sent; ball is in ZKIN\'s court. No director assigned yet — contingent on deal moving forward.',
+    notes: 'Reverse merger: Hypertrust/Cube assets merging into ZKIN. PIPE of $10M (20% OID, $8M net) combined with CEO control buyout of $15M. Term sheet sent; ball is in ZKIN\'s court. No director assigned yet — contingent on deal moving forward.',
   },
   {
     id: 'secundavida',
@@ -1452,43 +1452,7 @@ const DEALS = [
     ],
     notes: 'ASX-listed advisory and marketing engagement. Investor awareness campaign in execution.',
   },
-  {
-    id: 'horizen',
-    name: 'Horizen Labs',
-    ticker: '—',
-    exchange: 'Private',
-    type: 'Advisory Agreement',
-    value: 'Advisory',
-    valueNum: 0,
-    status: 'in-progress',
-    statusLabel: 'In Progress',
-    director: 'Josh Bartch',
-    directorEmail: 'bartchjosh@gmail.com',
-    projected: 'Ongoing',
-    pipeGross: '—',
-    pipeNet: '—',
-    pipeNote: '',
-    progress: 40,
-    milestones: [
-      { label: 'Advisory agreement drafted', status: 'done' },
-      { label: 'Ross Carmel redline received', status: 'done' },
-      { label: 'Sign Kadouh reviewing clean-up', status: 'in-progress' },
-      { label: 'Agreement execution', status: 'pending' },
-    ],
-    outstanding: [
-      { text: 'Advisory agreement — clean up redline from Ross Carmel', owner: 'Sign Kadouh', priority: 'medium' },
-    ],
-    documents: [
-      { name: 'Advisory Agreement', status: 'draft' },
-      { name: 'Ross Carmel Redline', status: 'draft' },
-    ],
-    contacts: [
-      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
-      { name: 'Sign Kadouh', role: 'Deal Operations', email: 'sign.kadouh@gmail.com' },
-      { name: 'Ross Carmel', role: 'Attorney, SRFC', email: 'rcarmel@srfc.law' },
-    ],
-    notes: 'Advisory agreement with Horizen Labs. Ross Carmel (Sichenzia) sent redlined version. Standing by for direction from Josh/Sign on whether George should clean it up.',
-  },
+
   {
     id: 'gcdt',
     name: 'GCDT / Green Circle',
@@ -1519,6 +1483,207 @@ const DEALS = [
       { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
     ],
     notes: 'F-1 resale registration filed Oct 14, 2026 for Target Capital and Square Gate. 1-for-6 reverse split effective Oct 7. AI data center pivot announcement caused -45% drop.',
+  },
+  {
+    id: 'cykl',
+    name: 'Cykel AI',
+    ticker: 'CYKL',
+    exchange: 'LSE',
+    type: 'Prospectus / Financing',
+    value: '£2M Placing',
+    valueNum: 2.5,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Josh Bartch',
+    directorEmail: 'bartchjosh@gmail.com',
+    projected: 'Q4 2026',
+    pipeGross: '£2,000,000',
+    pipeNet: '£2,000,000',
+    pipeNote: '16.67M shares @ £0.12 placing price',
+    progress: 50,
+    milestones: [
+      { label: 'Warrant structure agreed', status: 'done' },
+      { label: 'Cap table finalized', status: 'done' },
+      { label: 'Prospectus drafting', status: 'in-progress' },
+      { label: 'FCA approval', status: 'pending' },
+      { label: 'Placing completion', status: 'pending' },
+      { label: 'Admission', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'Prospectus approval from FCA', owner: 'Fortified Securities', priority: 'high' },
+      { text: 'Placing investor commitments', owner: 'Josh Bartch', priority: 'high' },
+    ],
+    documents: [
+      { name: 'Cap Table', status: 'final' },
+      { name: 'Warrant Register', status: 'final' },
+      { name: 'Prospectus Draft', status: 'draft' },
+    ],
+    contacts: [
+      { name: 'Josh Bartch', role: 'Investor', email: 'bartchjosh@gmail.com' },
+      { name: 'Sign Kadouh', role: 'Advisor', email: 'sign.kadouh@gmail.com' },
+      { name: 'Fortified Securities', role: 'Broker', email: '' },
+    ],
+    notes: 'LSE-listed AI company. £2M placing at £0.12/share. Josh holds 7.8M warrants (2.6M pre-paid @ £0.12 + 5.2M cash). Sign Kadouh holds 10.4M warrants. Current market cap ~£904K. Heavily dilutive structure — 5.2M shares to potentially 65.8M fully diluted (12.7x).',
+  },
+  {
+    id: 'id8',
+    name: 'ID8 / Identitii',
+    ticker: 'ID8',
+    exchange: 'ASX',
+    type: 'PIPE + Advisory',
+    value: '$20M',
+    valueNum: 20,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'John Rayment',
+    directorEmail: 'john.rayment@identitii.com',
+    projected: 'TBD',
+    pipeGross: '$20M',
+    pipeNet: '$20M',
+    pipeNote: 'Tranche 1: $15M @ $0.375 | Tranche 2: $5M @ $0.50',
+    progress: 45,
+    milestones: [
+      { label: 'Term sheet drafted', status: 'done' },
+      { label: 'Term sheet executed', status: 'done' },
+      { label: 'Definitive agreement', status: 'pending' },
+      { label: 'PIPE closing', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'Definitive agreement drafting', owner: 'Ross Carmel', priority: 'high' },
+    ],
+    documents: [
+      { name: 'Term Sheet', status: 'signed' },
+    ],
+    contacts: [
+      { name: 'John Rayment', role: 'CEO, Identitii', email: 'john.rayment@identitii.com' },
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+      { name: 'Eric Boehnke', role: 'Lead Investor', email: 'eric@trenchantcapital.net' },
+    ],
+    notes: 'ASX-listed identity verification company. $20M PIPE in two tranches. Term sheet executed. 200:1 consolidation planned. Atlas Partners controls ~83% fully diluted.',
+  },
+  {
+    id: 'hrny',
+    name: 'Horizen Labs',
+    ticker: 'HRNY',
+    exchange: 'CSE',
+    type: 'Advisory',
+    value: 'Advisory',
+    valueNum: 0,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Robert',
+    directorEmail: '',
+    projected: 'Ongoing',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: '',
+    progress: 40,
+    milestones: [
+      { label: 'Advisory agreement drafted', status: 'done' },
+      { label: 'Ross Carmel redline received', status: 'done' },
+      { label: 'Agreement clean-up', status: 'in-progress' },
+      { label: 'Agreement execution', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'Clean up redline from Ross Carmel', owner: 'Sign Kadouh', priority: 'medium' },
+    ],
+    documents: [
+      { name: 'Advisory Agreement', status: 'draft' },
+      { name: 'Ross Carmel Redline', status: 'draft' },
+    ],
+    contacts: [
+      { name: 'Robert', role: 'CEO', email: '' },
+      { name: 'Thomas Palletti', role: 'Counsel', email: '' },
+      { name: 'Sign Kadouh', role: 'Advisor', email: 'sign.kadouh@gmail.com' },
+      { name: 'Andy Wang', role: 'Auditor, TAAD', email: 'andy@taadllp.com' },
+    ],
+    notes: 'CSE-listed. Advisory agreement in progress. Thomas Palletti is counsel, TAAD is auditor, Robert is CEO, Sign Kadouh is advisor. Redline from Ross Carmel pending clean-up.',
+  },
+  {
+    id: 'mexedia',
+    name: 'Mexedia',
+    ticker: 'ALMEX',
+    exchange: 'Euronext',
+    type: 'Holdings',
+    value: 'Holdings',
+    valueNum: 0,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Josh Bartch',
+    directorEmail: 'bartchjosh@gmail.com',
+    projected: 'Ongoing',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: 'Previously halted by AMF Sept 2025 for suspected pump-and-dump',
+    progress: 50,
+    milestones: [
+      { label: 'Position established', status: 'done' },
+      { label: 'Monitoring', status: 'in-progress' },
+    ],
+    outstanding: [],
+    documents: [],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: 'Euronext Paris listed. Previously halted by AMF Sept-Oct 2025 for suspected manipulation. Extreme volatility — 52-week range €2.85-€29.60.',
+  },
+  {
+    id: 'alrpd',
+    name: 'Rapid Nutrition',
+    ticker: 'ALRPD',
+    exchange: 'Euronext',
+    type: 'Holdings + Warrants',
+    value: 'Holdings',
+    valueNum: 0,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Josh Bartch',
+    directorEmail: 'bartchjosh@gmail.com',
+    projected: 'Ongoing',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: '280K shares + 670K A Warrants (€1.00) + 190K B Warrants (€2.00)',
+    progress: 50,
+    milestones: [
+      { label: 'Position established', status: 'done' },
+      { label: 'Warrant register confirmed with Orana', status: 'done' },
+      { label: 'Monitoring', status: 'in-progress' },
+    ],
+    outstanding: [],
+    documents: [],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+      { name: 'Sarah Cope', role: 'Orana Corporate LLP', email: 'sarah@oranacorp.com' },
+    ],
+    notes: 'Euronext Amsterdam (London AIM cross-listed). Josh holds 280K shares + 670K A Warrants (€1.00, exp Jan 2028) + 190K B Warrants (€2.00, exp Jan 2028). Warrant register managed by Orana Corporate (Sarah Cope).',
+  },
+  {
+    id: 'adomos',
+    name: 'Adomos',
+    ticker: 'ALADO',
+    exchange: 'Euronext',
+    type: 'Holdings',
+    value: 'Holdings',
+    valueNum: 0,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Josh Bartch',
+    directorEmail: 'bartchjosh@gmail.com',
+    projected: 'Ongoing',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: '',
+    progress: 50,
+    milestones: [
+      { label: 'Position established', status: 'done' },
+      { label: 'Monitoring', status: 'in-progress' },
+    ],
+    outstanding: [],
+    documents: [],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+    ],
+    notes: 'Euronext Paris listed French real estate technology company.',
   },
 ];
 
@@ -1617,8 +1782,8 @@ function renderStats() {
 }
 
 function renderFilters() {
-  const statuses = ['all', 'active', 'pending', 'early', 'litigation'];
-  const labels = { all: 'All Deals', active: 'Active', pending: 'Pending', early: 'Early Stage', litigation: 'Litigation' };
+  const statuses = ['all', 'active', 'in-progress', 'pending', 'early', 'litigation'];
+  const labels = { all: 'All Deals', active: 'Active', 'in-progress': 'In Progress', pending: 'Pending', early: 'Early Stage', litigation: 'Litigation' };
   const group = document.getElementById('filter-group');
   group.innerHTML = statuses.map(s =>
     `<button class="filter-btn ${currentFilter === s ? 'active' : ''}" onclick="setFilter('${s}')">${labels[s]}</button>`
@@ -1904,12 +2069,25 @@ init();
 // LIVE MARKET DATA
 // ═══════════════════════════════════════════════════════════════
 const LIVE_TICKERS = [
+  // Nasdaq
   { symbol: 'SUGP', exchange: 'Nasdaq' },
   { symbol: 'RZAI', exchange: 'Nasdaq' },
   { symbol: 'ZKIN', exchange: 'Nasdaq' },
+  // NYSE American
   { symbol: 'GCDT', exchange: 'NYSE' },
+  // OTC
   { symbol: 'YQAI', exchange: 'OTC' },
+  // ASX
   { symbol: 'SCP.AX', display: 'SCP', exchange: 'ASX' },
+  { symbol: 'ID8.AX', display: 'ID8', exchange: 'ASX' },
+  // CSE
+  { symbol: 'HRNY.CN', display: 'HRNY', exchange: 'CSE' },
+  // LSE
+  { symbol: 'CYKL.L', display: 'CYKL', exchange: 'LSE' },
+  // Euronext
+  { symbol: 'ALMEX.PA', display: 'ALMEX', exchange: 'Euronext' },
+  { symbol: 'ALRPD.PA', display: 'ALRPD', exchange: 'Euronext' },
+  { symbol: 'ALADO.PA', display: 'ALADO', exchange: 'Euronext' },
 ];
 
 async function fetchQuotes() {
