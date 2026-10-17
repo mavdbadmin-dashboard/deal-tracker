@@ -1705,6 +1705,7 @@ const STATUS_CONFIG = {
 let currentFilter = 'all';
 let currentSearch = '';
 let currentDealIndex = -1;
+let currentGroupBy = 'exchange'; // 'exchange' or 'status' or 'none'
 
 function initials(name) {
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
@@ -1787,13 +1788,65 @@ function renderFilters() {
   const group = document.getElementById('filter-group');
   group.innerHTML = statuses.map(s =>
     `<button class="filter-btn ${currentFilter === s ? 'active' : ''}" onclick="setFilter('${s}')">${labels[s]}</button>`
-  ).join('');
+  ).join('') + `
+    <span style="display:inline-block;width:1px;height:24px;background:#1E2D45;margin:0 8px;vertical-align:middle;"></span>
+    <button class="filter-btn ${currentGroupBy === 'exchange' ? 'active' : ''}" onclick="setGroupBy('exchange')" style="font-size:12px;">By Exchange</button>
+    <button class="filter-btn ${currentGroupBy === 'status' ? 'active' : ''}" onclick="setGroupBy('status')" style="font-size:12px;">By Status</button>
+    <button class="filter-btn ${currentGroupBy === 'none' ? 'active' : ''}" onclick="setGroupBy('none')" style="font-size:12px;">No Grouping</button>
+  `;
 }
 
 function setFilter(f) {
   currentFilter = f;
   renderFilters();
   renderGrid();
+}
+
+function setGroupBy(g) {
+  currentGroupBy = g;
+  renderFilters();
+  renderGrid();
+}
+
+function renderDealCard(d, i) {
+  const sc = STATUS_CONFIG[d.status];
+  return `
+  <div class="deal-card" data-status="${d.status}" style="animation-delay: ${i * 0.06}s" onclick="openDetail('${d.id}')">
+    <div class="card-top">
+      <div>
+        <div class="deal-name">${d.name}</div>
+        ${d.ticker !== '—' ? `<div class="deal-ticker">${d.ticker}</div>` : ''}
+      </div>
+      <span class="status-badge ${sc.class}"><span class="dot"></span>${sc.label}</span>
+    </div>
+    <div class="card-meta">
+      <span class="meta-tag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        ${d.exchange}
+      </span>
+      <span class="meta-tag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        ${d.type}
+      </span>
+    </div>
+    <div class="card-value">${d.value}</div>
+    <div class="progress-section">
+      <div class="progress-label">
+        <span>Completion</span>
+        <span>${d.progress}%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" data-width="${d.progress}"></div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="director-info">
+        <div class="director-avatar">${initials(d.director)}</div>
+        <span class="director-name">${d.director}</span>
+      </div>
+      <span class="projected-date">${d.projected}</span>
+    </div>
+  </div>`;
 }
 
 function renderGrid() {
@@ -1805,46 +1858,54 @@ function renderGrid() {
     return;
   }
 
-  grid.innerHTML = deals.map((d, i) => {
-    const sc = STATUS_CONFIG[d.status];
-    return `
-    <div class="deal-card" data-status="${d.status}" style="animation-delay: ${i * 0.06}s" onclick="openDetail('${d.id}')">
-      <div class="card-top">
-        <div>
-          <div class="deal-name">${d.name}</div>
-          ${d.ticker !== '—' ? `<div class="deal-ticker">${d.ticker}</div>` : ''}
-        </div>
-        <span class="status-badge ${sc.class}"><span class="dot"></span>${sc.label}</span>
-      </div>
-      <div class="card-meta">
-        <span class="meta-tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          ${d.exchange}
-        </span>
-        <span class="meta-tag">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          ${d.type}
-        </span>
-      </div>
-      <div class="card-value">${d.value}</div>
-      <div class="progress-section">
-        <div class="progress-label">
-          <span>Completion</span>
-          <span>${d.progress}%</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" data-width="${d.progress}"></div>
-        </div>
-      </div>
-      <div class="card-footer">
-        <div class="director-info">
-          <div class="director-avatar">${initials(d.director)}</div>
-          <span class="director-name">${d.director}</span>
-        </div>
-        <span class="projected-date">${d.projected}</span>
-      </div>
-    </div>`;
-  }).join('');
+  if (currentGroupBy === 'none') {
+    grid.innerHTML = deals.map((d, i) => renderDealCard(d, i)).join('');
+  } else {
+    // Group deals
+    const groups = {};
+    const groupOrder = currentGroupBy === 'exchange'
+      ? ['Nasdaq', 'NYSE American', 'OTC', 'ASX', 'CSE', 'LSE', 'Euronext', 'Private', 'Nasdaq Capital Market', 'Nasdaq (delisted)']
+      : ['Active', 'In Progress', 'Pending', 'Early Stage', 'Litigation', 'Blocked'];
+
+    const groupIcons = currentGroupBy === 'exchange' ? {
+      'Nasdaq': '🇺🇸', 'NYSE American': '🇺🇸', 'OTC': '🇺🇸', 'ASX': '🇦🇺',
+      'CSE': '🇨🇦', 'LSE': '🇬🇧', 'Euronext': '🇪🇺', 'Private': '🔒',
+      'Nasdaq Capital Market': '🇺🇸', 'Nasdaq (delisted)': '🇺🇸'
+    } : {
+      'Active': '⚡', 'In Progress': '🔄', 'Pending': '⏳',
+      'Early Stage': '🔬', 'Litigation': '⚖️', 'Blocked': '🚫'
+    };
+
+    deals.forEach(d => {
+      const key = currentGroupBy === 'exchange' ? d.exchange : (STATUS_CONFIG[d.status]?.label || d.statusLabel);
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(d);
+    });
+
+    let html = '';
+    let globalIdx = 0;
+
+    // Sort groups by predefined order
+    const sortedKeys = Object.keys(groups).sort((a, b) => {
+      const ai = groupOrder.indexOf(a);
+      const bi = groupOrder.indexOf(b);
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+    });
+
+    sortedKeys.forEach(key => {
+      const icon = groupIcons[key] || '📊';
+      html += `<div style="grid-column:1/-1;margin-top:24px;margin-bottom:8px;padding:12px 16px;background:rgba(255,255,255,0.03);border:1px solid #1E2D45;border-radius:10px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:20px;">${icon}</span>
+        <span style="font-family:Syne,sans-serif;font-weight:700;font-size:16px;color:#F1F5F9;letter-spacing:0.5px;">${key}</span>
+        <span style="font-size:13px;color:#64748B;margin-left:auto;">${groups[key].length} deal${groups[key].length !== 1 ? 's' : ''}</span>
+      </div>`;
+      groups[key].forEach(d => {
+        html += renderDealCard(d, globalIdx++);
+      });
+    });
+
+    grid.innerHTML = html;
+  }
 
   // Animate progress bars
   requestAnimationFrame(() => {
