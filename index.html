@@ -1712,6 +1712,39 @@ const DEALS = [
     ],
     notes: 'Euronext Paris listed French real estate technology company.',
   },
+
+  {
+    id: 'hrny',
+    name: 'HRNY',
+    ticker: 'HRNY',
+    exchange: 'CSE',
+    type: 'Share Disposition',
+    value: '~3M shares remaining',
+    valueNum: 0,
+    status: 'active',
+    statusLabel: 'Active',
+    director: 'Josh Bartch',
+    directorEmail: 'bartchjosh@gmail.com',
+    projected: 'Ongoing',
+    pipeGross: '—',
+    pipeNet: '—',
+    pipeNote: '~3M shares remaining to sell',
+    progress: 60,
+    milestones: [
+      { label: 'Position established', status: 'done' },
+      { label: 'Share sales in progress', status: 'in-progress' },
+      { label: 'Complete disposition', status: 'pending' },
+    ],
+    outstanding: [
+      { text: 'Continue share sales — ~3M shares remaining', owner: 'Josh Bartch', priority: 'high' },
+    ],
+    documents: [],
+    contacts: [
+      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+      { name: 'Sign Kadouh', role: 'Deal Operations', email: 'sign.kadouh@gmail.com' },
+    ],
+    notes: 'Active share disposition on the CSE. Approximately 3M shares remaining to sell. Sales spreadsheet incoming from Josh.',
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -2213,38 +2246,7 @@ async function fetchQuotes() {
     const resp = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`);
     if (resp.ok) {
       const data = await resp.json();
-      const quotes = data.quoteResponse?.result || [  {
-    id: 'hrny',
-    name: 'HRNY',
-    ticker: 'HRNY',
-    exchange: 'CSE',
-    type: 'Share Disposition',
-    value: '~3M shares remaining',
-    valueNum: 0,
-    status: 'active',
-    statusLabel: 'Active',
-    director: 'Josh Bartch',
-    directorEmail: 'bartchjosh@gmail.com',
-    projected: 'Ongoing',
-    pipeGross: '—',
-    pipeNet: '—',
-    pipeNote: '~3M shares remaining to sell',
-    progress: 60,
-    milestones: [
-      { label: 'Position established', status: 'done' },
-      { label: 'Share sales in progress', status: 'in-progress' },
-      { label: 'Complete disposition', status: 'pending' },
-    ],
-    outstanding: [
-      { text: 'Continue share sales — ~3M shares remaining', owner: 'Josh Bartch', priority: 'high' },
-    ],
-    documents: [],
-    contacts: [
-      { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
-      { name: 'Sign Kadouh', role: 'Deal Operations', email: 'sign.kadouh@gmail.com' },
-    ],
-    notes: 'Active share disposition on the CSE. Approximately 3M shares remaining to sell. Sales spreadsheet incoming from Josh.',
-  },
+      const quotes = data.quoteResponse?.result || []  ,
 ];
       container.innerHTML = quotes.map(q => {
         const ticker = LIVE_TICKERS.find(t => t.symbol === q.symbol);
