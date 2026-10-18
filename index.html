@@ -2218,8 +2218,8 @@ async function fetchQuotes() {
     name: 'HRNY',
     ticker: 'HRNY',
     exchange: 'CSE',
-    type: 'Active Deal',
-    value: 'Holdings',
+    type: 'Share Disposition',
+    value: '~3M shares remaining',
     valueNum: 0,
     status: 'active',
     statusLabel: 'Active',
@@ -2228,18 +2228,22 @@ async function fetchQuotes() {
     projected: 'Ongoing',
     pipeGross: '—',
     pipeNet: '—',
-    pipeNote: '',
-    progress: 50,
+    pipeNote: '~3M shares remaining to sell',
+    progress: 60,
     milestones: [
       { label: 'Position established', status: 'done' },
-      { label: 'Monitoring', status: 'in-progress' },
+      { label: 'Share sales in progress', status: 'in-progress' },
+      { label: 'Complete disposition', status: 'pending' },
     ],
-    outstanding: [],
+    outstanding: [
+      { text: 'Continue share sales — ~3M shares remaining', owner: 'Josh Bartch', priority: 'high' },
+    ],
     documents: [],
     contacts: [
       { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
+      { name: 'Sign Kadouh', role: 'Deal Operations', email: 'sign.kadouh@gmail.com' },
     ],
-    notes: 'Active deal on the CSE. Details to be updated.',
+    notes: 'Active share disposition on the CSE. Approximately 3M shares remaining to sell. Sales spreadsheet incoming from Josh.',
   },
 ];
       container.innerHTML = quotes.map(q => {
