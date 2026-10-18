@@ -1006,6 +1006,18 @@ const DEALS = [
     pipeGross: '—',
     pipeNet: '—',
     pipeNote: '20% OID',
+    capTable: [
+      { name: 'Josh Bartch (Jupiter Capital LLC)', pct: '46.34%' },
+      { name: 'Scott (Bergalinex Investments Ltd)', pct: '30.00%' },
+      { name: 'Sign Kadouh', pct: '7.50%' },
+      { name: 'Rob Roscow', pct: '5.00%' },
+      { name: 'Damon (Emerald Baron LLC)', pct: '5.00%' },
+      { name: 'Karl Nana', pct: '2.50%' },
+      { name: 'Ray (Pioneer Garage Ltd)', pct: '2.00%' },
+      { name: 'Ever Glory Holdings Ltd', pct: '1.00%' },
+      { name: 'Patrick Schneider', pct: '0.33%' },
+      { name: 'Carran Schneider', pct: '0.33%' },
+    ],
     progress: 55,
     milestones: [
       { label: 'SUGP PIPE financing initiated', status: 'in-progress' },
@@ -1056,6 +1068,15 @@ const DEALS = [
     pipeGross: '—',
     pipeNet: '—',
     pipeNote: 'Per project',
+    capTable: [
+      { name: 'Josh Bartch (Jupiter Capital LLC)', pct: '27.50%' },
+      { name: 'Bergalinex Investments Ltd', pct: '25.00%' },
+      { name: 'Property Owners (Longland/Conico)', pct: '20.00%' },
+      { name: 'Sam Charanek', pct: '15.00%' },
+      { name: 'Kyler (entity TBD)', pct: '5.00%' },
+      { name: 'Round Lot Shareholders (300)', pct: '5.00%' },
+      { name: 'Sign Kadouh', pct: '2.50%' },
+    ],
     progress: 40,
     milestones: [
       { label: 'Concept development', status: 'done' },
@@ -1106,6 +1127,20 @@ const DEALS = [
     pipeGross: '—',
     pipeNet: '—',
     pipeNote: '',
+    capTable: [
+      { name: 'Jupiter Capital LLC (Josh)', pct: '39.50%' },
+      { name: 'Bergalinex Investments Ltd', pct: '24.84%' },
+      { name: '89 Group LLC', pct: '10.00%' },
+      { name: 'Sign Kadouh', pct: '7.50%' },
+      { name: 'Arkham Advisory', pct: '5.00%' },
+      { name: 'AVC Digital Ltd', pct: '5.00%' },
+      { name: 'Talora Consulting LLC', pct: '2.30%' },
+      { name: 'Lawrence Wu', pct: '2.30%' },
+      { name: 'MyCar Enterprises Ltd', pct: '1.50%' },
+      { name: 'Refuge Capital Corp', pct: '1.00%' },
+      { name: 'Ever Glory Holdings Ltd', pct: '1.00%' },
+      { name: 'Cube Group Inc', pct: '0.06%' },
+    ],
     progress: 25,
     milestones: [
       { label: 'ZKIN term sheet drafted', status: 'done' },
@@ -1196,6 +1231,9 @@ const DEALS = [
     pipeGross: '—',
     pipeNet: '—',
     pipeNote: 'Josh holds 2,968,704 shares',
+    capTable: [
+      { name: 'Josh Bartch (MavDB nominee)', pct: '2,968,704 shares' },
+    ],
     progress: 80,
     milestones: [
       { label: 'Advisory agreement executed', status: 'done' },
@@ -1463,6 +1501,12 @@ const DEALS = [
     pipeGross: '—',
     pipeNet: '—',
     pipeNote: '',
+    capTable: [
+      { name: 'Placing Investors', pct: '54.39%' },
+      { name: 'Pre-Paid Warrant Exercise (25.4%)', pct: '26.62%' },
+      { name: 'Current Shareholders', pct: '16.86%' },
+      { name: 'Fortified (Broker Fees)', pct: '2.12%' },
+    ],
     progress: 50,
     milestones: [
       { label: 'Warrant structure agreed', status: 'done' },
@@ -1963,6 +2007,33 @@ function renderDetail(d) {
       </div>
     </div>
   `;
+
+  // Cap Table
+  if (d.capTable && d.capTable.length) {
+    html += `
+      <div class="detail-section full-width">
+        <div class="section-title"><span class="icon">📊</span> Cap Table</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:14px;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);">
+                <th style="text-align:left;padding:10px 12px;color:var(--text-secondary);font-weight:500;">Holder</th>
+                <th style="text-align:right;padding:10px 12px;color:var(--text-secondary);font-weight:500;">Ownership</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${d.capTable.map(row => `
+                <tr style="border-bottom:1px solid var(--border-subtle);">
+                  <td style="padding:10px 12px;color:var(--text-primary);">${row.name}</td>
+                  <td style="text-align:right;padding:10px 12px;color:var(--accent-green);font-weight:600;">${row.pct}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
 
   // Contacts
   html += `
