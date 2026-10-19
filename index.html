@@ -6,6 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<!-- v20261019043140 -->
 <title>MavDB — Deal Command Center</title>
 
 <!-- PWA / App Manifest -->
@@ -1473,6 +1474,8 @@ const DEALS = [
     pipeNote: '',
     investment: {
       costBasis: 1500000,
+      structure: 'CLN: AUD $15M @ $1.00/share + AUD $5M @ $2.00/share = $20M total facility',
+      nextPayment: 'AUD $1.5M due October 30, 2026',
       currency: 'AUD',
       totalSharesSold: 105780,
       grossRevenue: 480657.40,
@@ -2185,6 +2188,16 @@ function renderDetail(d) {
           <div style="color:var(--text-muted);font-size:12px;margin-bottom:4px;">Avg Price</div>
           <div style="color:var(--text-primary);font-size:18px;font-weight:700;">${inv.currency} $${avgPrice}</div>
         </div>
+      </div>
+      <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+        ${inv.structure ? `<div style="flex:1;min-width:250px;background:linear-gradient(135deg,rgba(59,130,246,0.1),rgba(16,185,129,0.1));border:1px solid var(--border);border-radius:10px;padding:14px;">
+          <div style="color:var(--text-muted);font-size:12px;margin-bottom:4px;">Structure</div>
+          <div style="color:var(--text-primary);font-size:14px;font-weight:500;">${inv.structure}</div>
+        </div>` : ''}
+        ${inv.nextPayment ? `<div style="flex:1;min-width:200px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:14px;">
+          <div style="color:#EF4444;font-size:12px;margin-bottom:4px;">⚠️ Upcoming Payment</div>
+          <div style="color:#EF4444;font-size:14px;font-weight:600;">${inv.nextPayment}</div>
+        </div>` : ''}
       </div>
       <div style="color:var(--text-muted);font-size:12px;margin-bottom:8px;">Sales History (last updated: ${inv.lastUpdated})</div>
       <div style="overflow-x:auto;max-height:300px;overflow-y:auto;">
