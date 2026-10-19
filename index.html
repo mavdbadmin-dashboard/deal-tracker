@@ -1446,8 +1446,8 @@ const DEALS = [
     name: 'SCP / Scalare Partners',
     ticker: 'SCP',
     exchange: 'ASX',
-    type: 'Advisory + Marketing',
-    value: 'Advisory',
+    type: 'Investment + Advisory',
+    value: 'Active Sales',
     valueNum: 0,
     status: 'active',
     statusLabel: 'Active',
@@ -1457,21 +1457,61 @@ const DEALS = [
     pipeGross: '—',
     pipeNet: '—',
     pipeNote: '',
-    progress: 60,
+    investment: {
+      costBasis: 1500000,
+      currency: 'AUD',
+      totalSharesSold: 105780,
+      grossRevenue: 480657.40,
+      fees: 7248.45,
+      netRevenue: 473408.95,
+      pnl: 473408.95 - 1500000,
+      pnlPct: ((473408.95 - 1500000) / 1500000 * 100).toFixed(1),
+      lastUpdated: '2026-10-16',
+      sales: [
+        { date: '2026-09-11', shares: 1280, price: 3.53, net: 4256.90 },
+        { date: '2026-09-14', shares: 2665, price: 3.64, net: 9434.42 },
+        { date: '2026-09-15', shares: 3423, price: 3.66, net: 12262.27 },
+        { date: '2026-09-16', shares: 765, price: 3.71, net: 2576.65 },
+        { date: '2026-09-17', shares: 1448, price: 3.71, net: 5114.77 },
+        { date: '2026-09-18', shares: 4960, price: 3.96, net: 19362.21 },
+        { date: '2026-09-21', shares: 2588, price: 4.07, net: 10272.28 },
+        { date: '2026-09-22', shares: 1595, price: 4.15, net: 6356.28 },
+        { date: '2026-09-23', shares: 400, price: 4.23, net: 1430.50 },
+        { date: '2026-09-24', shares: 600, price: 4.33, net: 2334.52 },
+        { date: '2026-09-25', shares: 1070, price: 4.37, net: 4414.40 },
+        { date: '2026-09-28', shares: 911, price: 4.37, net: 3719.57 },
+        { date: '2026-10-02', shares: 6437, price: 4.37, net: 27861.81 },
+        { date: '2026-10-05', shares: 1024, price: 4.39, net: 4233.86 },
+        { date: '2026-10-06', shares: 396, price: 4.39, net: 1478.44 },
+        { date: '2026-10-07', shares: 5326, price: 4.40, net: 23169.44 },
+        { date: '2026-10-08', shares: 5450, price: 4.45, net: 23995.81 },
+        { date: '2026-10-09', shares: 5100, price: 4.50, net: 22666.80 },
+        { date: '2026-10-12', shares: 13648, price: 4.62, net: 62594.85 },
+        { date: '2026-10-13', shares: 4176, price: 4.70, net: 19365.22 },
+        { date: '2026-10-14', shares: 13656, price: 4.78, net: 64672.92 },
+        { date: '2026-10-15', shares: 13462, price: 4.89, net: 65326.39 },
+        { date: '2026-10-16', shares: 15400, price: 5.01, net: 76508.64 },
+      ],
+    },
+    progress: 32,
     milestones: [
+      { label: 'Investment made', status: 'done' },
+      { label: 'Sales commenced via Safari Asia', status: 'done' },
       { label: 'Marketing campaign designed', status: 'done' },
       { label: 'Investor awareness deck', status: 'done' },
-      { label: 'Campaign execution', status: 'in-progress' },
+      { label: 'Target: recover cost basis', status: 'in-progress', note: 'AUD $473K of $1.5M recovered (31.6%)' },
+      { label: 'Target: full return + profit', status: 'pending' },
     ],
     outstanding: [],
     documents: [
+      { name: 'Sales Tracker', status: 'final' },
       { name: 'Marketing Deck', status: 'final' },
       { name: 'Investor Awareness Deck', status: 'final' },
     ],
     contacts: [
       { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
     ],
-    notes: 'ASX-listed advisory and marketing engagement. Investor awareness campaign in execution.',
+    notes: 'AUD $1.5M invested. Sales via Bergalinex/Safari Asia (Account 120325). 105,780 shares sold as of Oct 16 at avg ~$4.54. Net proceeds AUD $473,409. 31.6% of cost basis recovered. Price trending up ($3.53 → $5.01).',
   },
 
   {
@@ -2089,6 +2129,74 @@ function renderDetail(d) {
   }
 
   // Contacts
+  
+  // Investment & Sales Tracker
+  if (d.investment && d.investment.sales) {
+    const inv = d.investment;
+    const pnl = inv.netRevenue - inv.costBasis;
+    const pnlPct = (pnl / inv.costBasis * 100).toFixed(1);
+    const recovered = (inv.netRevenue / inv.costBasis * 100).toFixed(1);
+    const isProfit = pnl >= 0;
+    const pnlColor = isProfit ? 'var(--accent-green)' : '#EF4444';
+    const avgPrice = (inv.grossRevenue / inv.totalSharesSold).toFixed(2);
+    
+    html += `
+    <div class="detail-section full-width">
+      <div class="section-title"><span class="icon">💰</span> Investment & Sales Tracker</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;">
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;">
+          <div style="color:var(--text-muted);font-size:12px;margin-bottom:4px;">Cost Basis</div>
+          <div style="color:var(--text-primary);font-size:18px;font-weight:700;">${inv.currency} $${inv.costBasis.toLocaleString()}</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;">
+          <div style="color:var(--text-muted);font-size:12px;margin-bottom:4px;">Net Proceeds</div>
+          <div style="color:var(--accent-green);font-size:18px;font-weight:700;">${inv.currency} $${inv.netRevenue.toLocaleString(undefined,{minimumFractionDigits:2})}</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;">
+          <div style="color:var(--text-muted);font-size:12px;margin-bottom:4px;">P&L</div>
+          <div style="color:${pnlColor};font-size:18px;font-weight:700;">${isProfit?'+':''}${inv.currency} $${pnl.toLocaleString(undefined,{minimumFractionDigits:2})} (${pnlPct}%)</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;">
+          <div style="color:var(--text-muted);font-size:12px;margin-bottom:4px;">Recovered</div>
+          <div style="color:var(--accent-blue);font-size:18px;font-weight:700;">${recovered}%</div>
+          <div style="background:rgba(59,130,246,0.15);border-radius:4px;height:6px;margin-top:6px;"><div style="background:var(--accent-blue);height:100%;border-radius:4px;width:${Math.min(recovered,100)}%;"></div></div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;">
+          <div style="color:var(--text-muted);font-size:12px;margin-bottom:4px;">Shares Sold</div>
+          <div style="color:var(--text-primary);font-size:18px;font-weight:700;">${inv.totalSharesSold.toLocaleString()}</div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:14px;">
+          <div style="color:var(--text-muted);font-size:12px;margin-bottom:4px;">Avg Price</div>
+          <div style="color:var(--text-primary);font-size:18px;font-weight:700;">${inv.currency} $${avgPrice}</div>
+        </div>
+      </div>
+      <div style="color:var(--text-muted);font-size:12px;margin-bottom:8px;">Sales History (last updated: ${inv.lastUpdated})</div>
+      <div style="overflow-x:auto;max-height:300px;overflow-y:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead style="position:sticky;top:0;background:var(--bg-secondary);">
+            <tr style="border-bottom:1px solid var(--border);">
+              <th style="text-align:left;padding:8px 10px;color:var(--text-secondary);font-weight:500;">Date</th>
+              <th style="text-align:right;padding:8px 10px;color:var(--text-secondary);font-weight:500;">Shares</th>
+              <th style="text-align:right;padding:8px 10px;color:var(--text-secondary);font-weight:500;">Price</th>
+              <th style="text-align:right;padding:8px 10px;color:var(--text-secondary);font-weight:500;">Net</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${inv.sales.map(s => `
+              <tr style="border-bottom:1px solid var(--border-subtle);">
+                <td style="padding:7px 10px;color:var(--text-primary);">${s.date}</td>
+                <td style="text-align:right;padding:7px 10px;color:var(--text-primary);">${s.shares.toLocaleString()}</td>
+                <td style="text-align:right;padding:7px 10px;color:var(--text-primary);">$${s.price.toFixed(2)}</td>
+                <td style="text-align:right;padding:7px 10px;color:var(--accent-green);font-weight:500;">$${s.net.toLocaleString(undefined,{minimumFractionDigits:2})}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    `;
+  }
+
   html += `
     <div class="detail-section">
       <div class="section-title"><span class="icon">👥</span> Key Contacts</div>
