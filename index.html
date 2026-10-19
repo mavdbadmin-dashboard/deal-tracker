@@ -921,10 +921,34 @@ if ('caches' in window) {
 </script>
 
 
-<!-- Live Market Ticker Bar -->
-<div id="ticker-bar" style="background:#0D1320;border-bottom:1px solid #1E2D45;padding:8px 20px;display:flex;align-items:center;gap:24px;overflow-x:auto;font-family:Inter,sans-serif;font-size:13px;position:sticky;top:0;z-index:999;">
-  <span style="color:#64748B;font-weight:600;white-space:nowrap;">📡 LIVE</span>
-  <div id="ticker-data" style="display:flex;gap:16px;align-items:center;"></div>
+<!-- Live Market Ticker Bar — TradingView Widget -->
+<div style="position:sticky;top:0;z-index:999;">
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+    "symbols": [
+      {"proName": "NASDAQ:SUGP", "title": "SUGP"},
+      {"proName": "NASDAQ:RZAI", "title": "RZAI"},
+      {"proName": "NASDAQ:ZKIN", "title": "ZKIN"},
+      {"proName": "AMEX:GCDT", "title": "GCDT"},
+      {"proName": "OTC:YQAI", "title": "YQAI"},
+      {"proName": "ASX:SCP", "title": "SCP"},
+      {"proName": "ASX:ID8", "title": "ID8"},
+      {"proName": "CSE:HRNY", "title": "HRNY"},
+      {"proName": "LSE:CYKL", "title": "CYKL"},
+      {"proName": "EURONEXT:ALMEX", "title": "ALMEX"},
+      {"proName": "EURONEXT:ALRPD", "title": "ALRPD"},
+      {"proName": "EURONEXT:ALADO", "title": "ALADO"}
+    ],
+    "showSymbolLogo": true,
+    "isTransparent": true,
+    "displayMode": "adaptive",
+    "colorTheme": "dark",
+    "locale": "en"
+  }
+  </script>
+</div>
 </div>
 
 <div class="app">
@@ -2349,75 +2373,6 @@ function init() {
 init();
 </script>
 
-<script>
-// ═══════════════════════════════════════════════════════════════
-// LIVE MARKET DATA
-// ═══════════════════════════════════════════════════════════════
-const LIVE_TICKERS = [
-  // Nasdaq
-  { symbol: 'SUGP', exchange: 'Nasdaq' },
-  { symbol: 'RZAI', exchange: 'Nasdaq' },
-  { symbol: 'ZKIN', exchange: 'Nasdaq' },
-  // NYSE American
-  { symbol: 'GCDT', exchange: 'NYSE' },
-  // OTC
-  { symbol: 'YQAI', exchange: 'OTC' },
-  // ASX
-  { symbol: 'SCP.AX', display: 'SCP', exchange: 'ASX' },
-  { symbol: 'ID8.AX', display: 'ID8', exchange: 'ASX' },
-  // CSE
-  // LSE
-  { symbol: 'HRNY.CN', display: 'HRNY', exchange: 'CSE' },
-  { symbol: 'CYKL.L', display: 'CYKL', exchange: 'LSE' },
-  // Euronext
-  { symbol: 'ALMEX.PA', display: 'ALMEX', exchange: 'Euronext' },
-  { symbol: 'ALRPD.PA', display: 'ALRPD', exchange: 'Euronext' },
-  { symbol: 'ALADO.PA', display: 'ALADO', exchange: 'Euronext' },
-];
 
-async function fetchQuotes() {
-  const container = document.getElementById('ticker-data');
-  if (!container) return;
-  try {
-    const symbols = LIVE_TICKERS.map(t => t.symbol).join(',');
-    const resp = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}`);
-    if (resp.ok) {
-      const data = await resp.json();
-      const quotes = data.quoteResponse?.result || []  ,
-];
-      container.innerHTML = quotes.map(q => {
-        const ticker = LIVE_TICKERS.find(t => t.symbol === q.symbol);
-        const name = ticker?.display || q.symbol;
-        const price = q.regularMarketPrice?.toFixed(2) || '—';
-        const change = q.regularMarketChange?.toFixed(2) || '0.00';
-        const pct = q.regularMarketChangePercent?.toFixed(2) || '0.00';
-        const vol = q.regularMarketVolume ? (q.regularMarketVolume > 1e6 ? (q.regularMarketVolume/1e6).toFixed(1)+'M' : (q.regularMarketVolume/1e3).toFixed(0)+'K') : '—';
-        const up = q.regularMarketChange >= 0;
-        const c = up ? '#10B981' : '#EF4444';
-        const a = up ? '▲' : '▼';
-        return `<div style="display:flex;align-items:center;gap:8px;white-space:nowrap;padding:4px 12px;background:rgba(255,255,255,0.03);border-radius:6px;">
-          <span style="color:#F1F5F9;font-weight:600;">${name}</span>
-          <span style="color:#F1F5F9;">$${price}</span>
-          <span style="color:${c};font-size:12px;">${a} ${change} (${pct}%)</span>
-          <span style="color:#64748B;font-size:11px;">Vol: ${vol}</span>
-        </div>`;
-      }).join('');
-    } else { showFallback(container); }
-  } catch(e) { showFallback(container); }
-}
-
-function showFallback(container) {
-  container.innerHTML = LIVE_TICKERS.map(t => {
-    const name = t.display || t.symbol;
-    return `<a href="https://finance.yahoo.com/quote/${t.symbol}" target="_blank" style="text-decoration:none;display:flex;align-items:center;gap:6px;white-space:nowrap;padding:4px 12px;background:rgba(255,255,255,0.03);border-radius:6px;">
-      <span style="color:#F1F5F9;font-weight:600;">${name}</span>
-      <span style="color:#64748B;font-size:11px;">${t.exchange}</span>
-    </a>`;
-  }).join('');
-}
-
-fetchQuotes();
-setInterval(fetchQuotes, 60000);
-</script>
 </body>
 </html>
