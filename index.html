@@ -905,6 +905,20 @@ body {
 </style>
 </head>
 <body>
+<script>
+// Force clear all caches and service workers
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) { registration.unregister(); }
+  });
+}
+if ('caches' in window) {
+  caches.keys().then(function(names) {
+    for (let name of names) { caches.delete(name); }
+  });
+}
+</script>
+
 
 <!-- Live Market Ticker Bar -->
 <div id="ticker-bar" style="background:#0D1320;border-bottom:1px solid #1E2D45;padding:8px 20px;display:flex;align-items:center;gap:24px;overflow-x:auto;font-family:Inter,sans-serif;font-size:13px;position:sticky;top:0;z-index:999;">
