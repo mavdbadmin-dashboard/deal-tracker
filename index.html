@@ -1501,16 +1501,18 @@ const DEALS = [
     pipeNote: '',
     investment: {
       costBasis: 1500000,
+      startingShares: 450000,
+      sharesRemaining: 308014,
       structure: 'CLN: AUD $15M @ $1.00/share + AUD $5M @ $2.00/share = $20M total facility',
       nextPayment: 'AUD $1.5M due October 30, 2026',
       currency: 'AUD',
-      totalSharesSold: 105780,
-      grossRevenue: 480657.40,
-      fees: 7248.45,
-      netRevenue: 473408.95,
-      pnl: 473408.95 - 1500000,
-      pnlPct: ((473408.95 - 1500000) / 1500000 * 100).toFixed(1),
-      lastUpdated: '2026-10-16',
+      totalSharesSold: 141986,
+      grossRevenue: 674466.37,
+      fees: 8853.19,
+      netRevenue: 665613.18,
+      pnl: 665613.18 - 1500000,
+      pnlPct: ((665613.18 - 1500000) / 1500000 * 100).toFixed(1),
+      lastUpdated: '2026-10-20',
       sales: [
         { date: '2026-09-11', shares: 1280, price: 3.53, net: 4256.90 },
         { date: '2026-09-14', shares: 2665, price: 3.64, net: 9434.42 },
@@ -1535,6 +1537,8 @@ const DEALS = [
         { date: '2026-10-14', shares: 13656, price: 4.78, net: 64672.92 },
         { date: '2026-10-15', shares: 13462, price: 4.89, net: 65326.39 },
         { date: '2026-10-16', shares: 15400, price: 5.01, net: 76508.64 },
+        { date: '2026-10-19', shares: 21043, price: 5.33, net: 111164.42 },
+        { date: '2026-10-20', shares: 15163, price: 5.39, net: 81039.81 },
       ],
     },
     progress: 32,
@@ -1543,7 +1547,7 @@ const DEALS = [
       { label: 'Sales commenced via Safari Asia', status: 'done' },
       { label: 'Marketing campaign designed', status: 'done' },
       { label: 'Investor awareness deck', status: 'done' },
-      { label: 'Target: recover cost basis', status: 'in-progress', note: 'AUD $473K net proceeds on $1.5M drawn (31.6% recovered). Selling at ~5x cost basis ($1.00 → $5.00)' },
+      { label: 'Target: recover cost basis', status: 'in-progress', note: 'AUD $665K net proceeds on $1.5M drawn (44.4% recovered). Selling at ~5.3x cost basis ($1.00 → $5.30+)' },
       { label: 'Target: full return + profit', status: 'pending' },
     ],
     outstanding: [
@@ -1557,7 +1561,7 @@ const DEALS = [
     contacts: [
       { name: 'Josh Bartch', role: 'CEO, MavDB', email: 'bartchjosh@gmail.com' },
     ],
-    notes: 'CLN facility: AUD $15M at $1.00/share + AUD $5M at $2.00/share (total $20M). Drawn: AUD $1.5M so far. Next draw: AUD $1.5M due Oct 30. Selling at ~$5.00 = 5x on $1.00 cost basis. Sales via Bergalinex/Safari Asia (Account 120325). 105,780 shares sold, net proceeds AUD $473,409.',
+    notes: 'CLN facility: AUD $15M at $1.00/share + AUD $5M at $2.00/share (total $20M). Drawn: AUD $1.5M so far. Next draw: AUD $1.5M due Oct 30. Starting position: 450,000 shares. Remaining: 308,014. Selling at ~$5.30 = 5.3x on $1.00 cost basis. Sales via Bergalinex/Safari Asia (Account 120325). 141,986 shares sold, net proceeds AUD $665,613.',
   },
 
   {
