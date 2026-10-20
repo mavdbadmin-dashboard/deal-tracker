@@ -18,7 +18,7 @@
 <meta name="application-name" content="MavDB Deals">
 <meta name="msapplication-TileColor" content="#0A0F1A">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230A0F1A'/><text x='50' y='65' font-size='40' text-anchor='middle' fill='%2310B981' font-family='Arial' font-weight='bold'>M</text></svg>">
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22MavDB%20Deal%20Command%20Center%22%2C%22short_name%22%3A%22Deal%20Tracker%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230A0F1A%22%2C%22theme_color%22%3A%22%230A0F1A%22%2C%22description%22%3A%22MavDB%20Consulting%20Deal%20Command%20Center%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%2520viewBox%3D'0%25200%2520100%2520100'%253E%253Crect%2520width%3D'100'%2520height%3D'100'%2520rx%3D'20'%2520fill%3D'%2523111827'%2F%253E%253Ctext%2520x%3D'50'%2520y%3D'65'%2520font-size%3D'40'%2520text-anchor%3D'middle'%2520fill%3D'%252310B981'%2520font-family%3D'Arial'%2520font-weight%3D'bold'%253EM%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -906,19 +906,29 @@ body {
 </style>
 </head>
 <body>
+
 <script>
-// Force clear all caches and service workers
+// Register a service worker that always fetches fresh content
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for(let registration of registrations) { registration.unregister(); }
-  });
-}
-if ('caches' in window) {
-  caches.keys().then(function(names) {
-    for (let name of names) { caches.delete(name); }
+  const swCode = `
+    self.addEventListener('install', e => { self.skipWaiting(); });
+    self.addEventListener('activate', e => {
+      e.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))));
+      return self.clients.claim();
+    });
+    self.addEventListener('fetch', e => {
+      e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+    });
+  `;
+  const blob = new Blob([swCode], {type: 'application/javascript'});
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).then(reg => {
+    reg.update();
+    setInterval(() => reg.update(), 30000); // Check for updates every 30 seconds
   });
 }
 </script>
+
 
 
 <!-- Live Market Ticker Bar — TradingView Widget -->
